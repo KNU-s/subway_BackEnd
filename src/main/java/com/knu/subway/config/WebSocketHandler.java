@@ -25,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
-    private final Map<WebSocketSession, String> sessionStockCodeMap = new ConcurrentHashMap<>();
+    private final Map<WebSocketSession, List<TextMessage>> sessionStockCodeMap = new ConcurrentHashMap<>();
+    private List<TextMessage> stations = new ArrayList<>();
     private final ApiService apiService;
     Map<String, WebSocketSession> sessionMap = new HashMap<>(); /*웹소켓 세션을 담아둘 맵*/
     /* 클라이언트로부터 메시지 수신시 동작 */
@@ -35,11 +36,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("===============Message=================");
         log.info("Received StationName : {}", stationName);
         log.info("===============Message=================");
-        synchronized (sessionMap) {
-            sessionStockCodeMap.put(session, stationName);
+        if(!stations.contains(message.getPayload())){
+            stations.add(message);
         }
-        log.info("session Count : {}", sessionMap.size());
-        log.info("session Count : {}", sessionStockCodeMap.size());
+        synchronized (sessionMap) {
+            sessionStockCodeMap.put(session, stations);
+        }
     }
 
     /* 클라이언트가 소켓 연결시 동작 */
@@ -73,18 +75,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void sendStockCode() throws JsonParseException {
         synchronized (sessionMap){
             for (WebSocketSession session : sessionMap.values()){
-                String stationName = sessionStockCodeMap.get(session);
-                if(stationName!=null) {
-                    try { // 주식 데이터를 가져오는 로직이 길어 service 단에 설계
-                        List<Dto> api = apiService.getSubwayArrivals(stationName);
-                        if (api != null) {
+                List<TextMessage> messages = sessionStockCodeMap.get(session);
+                for(TextMessage message : messages){
+                    String stationName = message.getPayload();
+                    if(stationName!=null) {
+                        try { // 주식 데이터를 가져오는 로직이 길어 service 단에 설계
+                            List<Dto> api = apiService.getSubwayArrivals(stationName);
+                            if (api != null) {
 
-                            log.info("Sending stock data : {}", api);
-                        } else {
-                            log.warn("No stock data found for stockCode : {}", stationName);
+                                log.info("Sending stock data : {}", api);
+                            } else {
+                                log.warn("No stock data found for stockCode : {}", stationName);
+                            }
+                        } catch (Exception e) {
+                            log.error("Error while sending stock data : {}", e.getMessage());
                         }
-                    } catch (Exception e) {
-                        log.error("Error while sending stock data : {}", e.getMessage());
                     }
                 }
             }
