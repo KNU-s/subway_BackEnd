@@ -1,6 +1,5 @@
 package com.knu.subway.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.subway.Dto;
 import com.knu.subway.service.ApiService;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,9 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
-    private final Map<WebSocketSession, List<TextMessage>> sessionStockCodeMap = new ConcurrentHashMap<>();
-    private List<TextMessage> stations = new ArrayList<>();
+    private final Map<WebSocketSession, List<TextMessage>> sessionStationMap = new ConcurrentHashMap<>();
     private final ApiService apiService;
+    List<TextMessage> stationList = new ArrayList<>();
     Map<String, WebSocketSession> sessionMap = new HashMap<>(); /*웹소켓 세션을 담아둘 맵*/
     /* 클라이언트로부터 메시지 수신시 동작 */
     @Override
@@ -36,11 +34,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("===============Message=================");
         log.info("Received StationName : {}", stationName);
         log.info("===============Message=================");
-        if(!stations.contains(message.getPayload())){
-            stations.add(message);
+        if(!stationList.contains(message.getPayload())){
+            stationList.add(message);
         }
         synchronized (sessionMap) {
-            sessionStockCodeMap.put(session, stations);
+            sessionStationMap.put(session, stationList);
         }
     }
 
@@ -75,7 +73,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void sendStockCode() throws JsonParseException {
         synchronized (sessionMap){
             for (WebSocketSession session : sessionMap.values()){
-                List<TextMessage> messages = sessionStockCodeMap.get(session);
+                List<TextMessage> messages = sessionStationMap.get(session);
                 for(TextMessage message : messages){
                     String stationName = message.getPayload();
                     if(stationName!=null) {
