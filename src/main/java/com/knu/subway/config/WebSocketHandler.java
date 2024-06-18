@@ -77,16 +77,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 for(TextMessage message : messages){
                     String stationName = message.getPayload();
                     if(stationName!=null) {
-                        try { // 주식 데이터를 가져오는 로직이 길어 service 단에 설계
+                        try { // 지하철 데이터를 가져오는 로직이 길어 service 단에 설계
                             List<Dto> api = apiService.getSubwayArrivals(stationName);
                             if (api != null) {
 
-                                log.info("Sending stock data : {}", api);
+                                log.info("Sending station data : {}", api);
                             } else {
-                                log.warn("No stock data found for stockCode : {}", stationName);
+                                log.warn("No station data found for stationCode : {}", stationName);
                             }
                         } catch (Exception e) {
-                            log.error("Error while sending stock data : {}", e.getMessage());
+                            log.error("Error while sending station data : {}", e.getMessage());
                         }
                     }
                 }
