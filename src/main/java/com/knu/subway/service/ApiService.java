@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,9 +20,12 @@ public class ApiService {
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+    @Value("${subway.api.key}")
+    private String apiKey;
 
     public ApiService(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
-        this.webClient = webClientBuilder.baseUrl("http://swopenAPI.seoul.go.kr/api/subway/6f4c6e794f6265683730424b715154/json/realtimeStationArrival/0/5").build();
+        String baseUrl = String.format("http://swopenAPI.seoul.go.kr/api/subway/%s/json/realtimeStationArrival/0/5", apiKey);
+        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
         this.objectMapper = objectMapper;
     }
 
