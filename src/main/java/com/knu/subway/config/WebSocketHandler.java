@@ -1,7 +1,11 @@
 package com.knu.subway.config;
 
 import com.knu.subway.Dto;
+import com.knu.subway.entity.Subway;
+import com.knu.subway.entity.SubwayInfo;
 import com.knu.subway.service.ApiService;
+import com.knu.subway.service.SubwayInfoService;
+import com.knu.subway.service.SubwayService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -17,15 +21,18 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
-    private final Map<WebSocketSession, List<TextMessage>> sessionStationMap = new ConcurrentHashMap<>();
+    private final Map<WebSocketSession, List<String>> sessionStationMap = new ConcurrentHashMap<>();
     private final ApiService apiService;
-    List<TextMessage> stationList = new ArrayList<>();
+    private final SubwayInfoService subwayInfoService;
+    private final SubwayService subwayService;
+    List<String> stationList = new ArrayList<>();
     Map<String, WebSocketSession> sessionMap = new HashMap<>(); /*웹소켓 세션을 담아둘 맵*/
     /* 클라이언트로부터 메시지 수신시 동작 */
     @Override
@@ -34,9 +41,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("===============Message=================");
         log.info("Received StationName : {}", stationName);
         log.info("===============Message=================");
-        if(!stationList.contains(message.getPayload())){
-            stationList.add(message);
-        }
+        stationList = subwayInfoService.findAll().stream()
+                .map(SubwayInfo::getSubwayName)
+                .collect(Collectors.toList());
+
         synchronized (sessionMap) {
             sessionStationMap.put(session, stationList);
         }
@@ -73,17 +81,25 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void sendStockCode() throws JsonParseException {
         synchronized (sessionMap){
             for (WebSocketSession session : sessionMap.values()){
-                List<TextMessage> messages = sessionStationMap.get(session);
-                for(TextMessage message : messages){
-                    String stationName = message.getPayload();
-                    if(stationName!=null) {
+                List<String> messages = sessionStationMap.get(session);
+                for(String message : messages){
+                    if(message!=null) {
                         try { // 지하철 데이터를 가져오는 로직이 길어 service 단에 설계
-                            List<Dto> api = apiService.getSubwayArrivals(stationName);
-                            if (api != null) {
+                            List<Dto> api = apiService.getSubwayArrivals(message);
+                            for(Dto dto : api){
+                                List<Subway> byStatnId = subwayService.findByStatnId(dto.getStatnId());
+                                boolean exists = byStatnId.stream()
+                                        .map(Subway::getStatnId)
+                                        .anyMatch(statnId -> statnId.equals(dto.getStatnId()));
 
+                                if (!exists) {
+                                    subwayService.save(dto.toEntity());
+                                }
+                            }
+                            if (api != null) {
                                 log.info("Sending station data : {}", api);
                             } else {
-                                log.warn("No station data found for stationCode : {}", stationName);
+                                log.warn("No station data found for stationCode : {}", message);
                             }
                         } catch (Exception e) {
                             log.error("Error while sending station data : {}", e.getMessage());
@@ -91,6 +107,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     }
                 }
             }
+
         }
     }
 
