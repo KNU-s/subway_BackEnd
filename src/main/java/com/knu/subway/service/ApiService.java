@@ -2,6 +2,7 @@ package com.knu.subway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.subway.Dto;
+import jakarta.annotation.PostConstruct;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,21 +13,34 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Service
 public class ApiService {
 
-    private final WebClient webClient;
+    private WebClient webClient;
     private final ObjectMapper objectMapper;
+
     @Value("${subway.api.key}")
     private String apiKey;
 
-    public ApiService(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
-        String baseUrl = String.format("http://swopenAPI.seoul.go.kr/api/subway/%s/json/realtimeStationArrival/0/5", apiKey);
-        this.webClient = webClientBuilder.baseUrl(baseUrl).build();
+    @Value("${subway.api.url}")
+    private String baseurl;
+
+    public ApiService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    @PostConstruct
+    private void init() {
+        String baseUrl = baseurl + apiKey + "/json/realtimeStationArrival/0/3";
+        System.out.println("TEST");
+        System.out.println(apiKey);
+        System.out.println(baseurl);
+
+        this.webClient = WebClient.create(baseUrl);
     }
 
     public List<Dto> getSubwayArrivals(String stationName) {
@@ -36,6 +50,7 @@ public class ApiService {
                 .bodyToMono(String.class);
 
         String responseBody = response.block();
+        System.out.println(responseBody);
         var dtos = new ArrayList<Dto>();
         try {
             JSONParser parser = new JSONParser();
@@ -44,16 +59,28 @@ public class ApiService {
             for (int i = 0; i < element.size(); i++) {
                 var tempEle = (JSONObject) element.get(i);
                 var dto = new Dto();
-                dto.setTrainLineNm((String) tempEle.get("trainLineNm"));
-                dto.setStatnNm((String) tempEle.get("statnNm"));
-                dto.setBarvlDt((String) tempEle.get("trainLineNm"));
-                dto.setBtrainNo((String) tempEle.get("btrainNo"));
-                dto.setBstatnId((String) tempEle.get("bstatnId"));
-                dto.setBstatnNm((String) tempEle.get("bstatnNm"));
-                dto.setRecptnDt((String) tempEle.get("recptnDt"));
-                dto.setArvlMsg2((String) tempEle.get("arvlMsg2"));
-                dto.setArvlMsg3((String) tempEle.get("arvlMsg3"));
-                dto.setArvlCd((String) tempEle.get("arvlCd"));
+                dto.setStatnId((String) tempEle.get("statnId"));
+//                dto.setPrevId((Long) tempEle.get("statnFid"));
+//                dto.setPrevId((Long) tempEle.get("statnTid"));
+//                dto.setTransferStations(Arrays.stream(((String)tempEle.get("tmsitCo")).split(",")).toList());
+                dto.setDstStation((String) tempEle.get("trainLineNm"));
+//                dto.setDstTime((Long) tempEle.get("barvlDt"));
+                dto.setDstMessage1((String) tempEle.get("arvlMsg2"));
+                dto.setDstMessage2((String) tempEle.get("arvlMsg3"));
+//                dto.setTrainStatus(TrainStatus.fromCode((int)tempEle.get("arvlCd")));
+                dto.setUpdnLine((String) tempEle.get("updnLine"));
+//                dto.setSubwayLine(SubwayLine.fromCode((int)tempEle.get("subwayId")));
+
+//                dto.setTrainLineNm((String) tempEle.get("trainLineNm"));
+//                dto.setStatnNm((String) tempEle.get("statnNm"));
+//                dto.setBarvlDt((String) tempEle.get("trainLineNm"));
+//                dto.setBtrainNo((String) tempEle.get("btrainNo"));
+//                dto.setBstatnId((String) tempEle.get("bstatnId"));
+//                dto.setBstatnNm((String) tempEle.get("bstatnNm"));
+//                dto.setRecptnDt((String) tempEle.get("recptnDt"));
+//                dto.setArvlMsg2((String) tempEle.get("arvlMsg2"));
+//                dto.setArvlMsg3((String) tempEle.get("arvlMsg3"));
+//                dto.setArvlCd((String) tempEle.get("arvlCd"));
                 dtos.add(dto);
             }
 
