@@ -2,6 +2,8 @@ package com.knu.subway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.subway.Dto;
+import com.knu.subway.entity.subwayEnum.SubwayLine;
+import com.knu.subway.entity.subwayEnum.TrainStatus;
 import jakarta.annotation.PostConstruct;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,16 +62,16 @@ public class ApiService {
                 var tempEle = (JSONObject) element.get(i);
                 var dto = new Dto();
                 dto.setStatnId((String) tempEle.get("statnId"));
-//                dto.setPrevId((Long) tempEle.get("statnFid"));
-//                dto.setPrevId((Long) tempEle.get("statnTid"));
+                dto.setPrevId((String) tempEle.get("statnFid"));
+                dto.setPrevId((String) tempEle.get("statnTid"));
 //                dto.setTransferStations(Arrays.stream(((String)tempEle.get("tmsitCo")).split(",")).toList());
                 dto.setDstStation((String) tempEle.get("trainLineNm"));
-//                dto.setDstTime((Long) tempEle.get("barvlDt"));
+                dto.setDstTime((String) tempEle.get("barvlDt"));
                 dto.setDstMessage1((String) tempEle.get("arvlMsg2"));
                 dto.setDstMessage2((String) tempEle.get("arvlMsg3"));
-//                dto.setTrainStatus(TrainStatus.fromCode((int)tempEle.get("arvlCd")));
+                dto.setTrainStatus((String)tempEle.get("arvlCd"));
                 dto.setUpdnLine((String) tempEle.get("updnLine"));
-//                dto.setSubwayLine(SubwayLine.fromCode((int)tempEle.get("subwayId")));
+                dto.setSubwayLine((String)tempEle.get("subwayId"));
 
 //                dto.setTrainLineNm((String) tempEle.get("trainLineNm"));
 //                dto.setStatnNm((String) tempEle.get("statnNm"));
