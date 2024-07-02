@@ -18,6 +18,7 @@ public class ApiController {
         List<Dto> api = apiService.getSubwayArrivals("?");
         return api.toString();
     }
+
     @GetMapping("/subway")
     public List<Dto> getData(@RequestParam String stationName) {
         return apiService.getSubwayArrivals(stationName);
