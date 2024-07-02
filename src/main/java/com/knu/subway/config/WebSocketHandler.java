@@ -94,6 +94,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
                                 if (!exists) {
                                     subwayService.save(dto.toEntity());
+                                } else {
+                                    subwayService.update(byStatnId.get(0).getId(), dto);
                                 }
                             }
                             if (api != null) {
