@@ -1,23 +1,23 @@
 package com.knu.subway.entity.subwayEnum;
 
 public enum TrainStatus {
-    ENTERING(0, "진입"),
-    ARRIVED(1, "도착"),
-    DEPARTING(2, "출발"),
-    DEPARTED_PREVIOUS_STATION(3, "전역 출발"),
-    ENTERING_PREVIOUS_STATION(4, "전역 진입"),
-    ARRIVED_PREVIOUS_STATION(5, "전역 도착"),
-    IN_TRANSIT(99, "운행중");
+    진입("0", "진입"),
+    도착("1", "도착"),
+    출발("2", "출발"),
+    전역_출발("3", "전역 출발"),
+    전역_진입("4", "전역 진입"),
+    전역_도착("5", "전역 도착"),
+    운행중("99", "운행중");
 
-    private final int code;
+    private final String code;
     private final String description;
 
-    TrainStatus(int code, String description) {
+    TrainStatus(String code, String description) {
         this.code = code;
         this.description = description;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -25,9 +25,9 @@ public enum TrainStatus {
         return description;
     }
 
-    public static TrainStatus fromCode(int code) {
+    public static TrainStatus fromCode(String code) {
         for (TrainStatus status : values()) {
-            if (status.code == code) {
+            if (status.code.equals(code)) {
                 return status;
             }
         }
