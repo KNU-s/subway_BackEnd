@@ -1,18 +1,16 @@
 package com.knu.subway.entity;
 
-import jakarta.persistence.*;
 import lombok.Getter;
-
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+@Setter
 @Getter
-@Entity
+@Document(collection = "subway_info")
 public class SubwayInfo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "SUBWAY_NAME")
+    private String id;
     private String subwayName;
-    @Column(name = "SUBWAY_LINE")
     private String subwayLine;
-    @Column(name = "SUBWAY_LINE_ID")
     private Long subwayLineId;
 }

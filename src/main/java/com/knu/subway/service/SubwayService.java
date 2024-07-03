@@ -22,7 +22,7 @@ public class SubwayService {
         subwayRepository.save(subway);
     }
     @Transactional
-    public void update(Long id, Dto subwayDto){
+    public void update(String id, Dto subwayDto){
         Optional<Subway> subway = subwayRepository.findById(id);
         if(!subway.isPresent()){
             throw new IllegalArgumentException("존재하지 않는 열차입니다.");

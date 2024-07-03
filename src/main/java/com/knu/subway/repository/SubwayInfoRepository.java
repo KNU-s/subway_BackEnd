@@ -1,10 +1,10 @@
 package com.knu.subway.repository;
 
 import com.knu.subway.entity.SubwayInfo;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface SubwayInfoRepository extends JpaRepository<SubwayInfo, Long> {
+public interface SubwayInfoRepository extends MongoRepository<SubwayInfo, String> {
 
 }
