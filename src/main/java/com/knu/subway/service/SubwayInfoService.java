@@ -4,20 +4,27 @@ import com.knu.subway.entity.SubwayInfo;
 import com.knu.subway.repository.SubwayInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class SubwayInfoService {
     private final SubwayInfoRepository subwayInfoRepository;
-
-    public List<SubwayInfo> findAll(){
+    public List<SubwayInfo> findAll() {
         return subwayInfoRepository.findAll();
     }
-    public String save(SubwayInfo subwayInfo){
-        SubwayInfo insert = subwayInfoRepository.save(subwayInfo);
-        return insert.getId();
+
+    public Optional<SubwayInfo> findById(String id) {
+        return subwayInfoRepository.findById(id);
+    }
+
+    public SubwayInfo save(SubwayInfo subwayInfo) {
+        return subwayInfoRepository.save(subwayInfo);
+    }
+
+    public void deleteById(String id) {
+        subwayInfoRepository.deleteById(id);
     }
 }
