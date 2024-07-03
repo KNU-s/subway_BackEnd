@@ -5,29 +5,23 @@ import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.subwayEnum.SubwayLine;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import com.knu.subway.repository.SubwayRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-@Transactional(readOnly = true)
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SubwayService {
     private final SubwayRepository subwayRepository;
-    @Transactional
-    public void save(Subway subway){
+    public String save(Subway subway){
+
         subwayRepository.save(subway);
+        return subway.getId();
     }
-    @Transactional
     public void update(String id, Dto subwayDto){
-        Optional<Subway> subway = subwayRepository.findById(id);
-        if(!subway.isPresent()){
-            throw new IllegalArgumentException("존재하지 않는 열차입니다.");
-        }
-        Subway findSubway = subway.get();
+        Subway findSubway = findSubwayById_orElseThrow(id);
         findSubway.setNextId(subwayDto.getNextId());
         findSubway.setPrevId(subwayDto.getPrevId());
         findSubway.setDstTime(subwayDto.getDstTime());
@@ -35,9 +29,29 @@ public class SubwayService {
         findSubway.setDstMessage2(subwayDto.getDstMessage2());
         findSubway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()));
         findSubway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()));
+        subwayRepository.save(findSubway);
+    }
+
+    public Subway findSubwayById_orElseThrow(String id){
+        return subwayRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Not Found SubwayById data."));
+    }
+
+    public List<Subway> findAll() {
+        return subwayRepository.findAll();
+    }
+
+    public void deleteById(String id) {
+        subwayRepository.deleteById(id);
+        log.info("Delete Subway id :{}", id);
     }
 
     public List<Subway> findByStatnId(String statnId){
+        List<Subway> subwayList = subwayRepository.findByStatnId(statnId);
+        if(subwayList.isEmpty()){
+            log.info("Not Found StationId List");
+            throw new IllegalArgumentException("Not Found StationId List.");
+        }
         return subwayRepository.findByStatnId(statnId);
     }
 }
