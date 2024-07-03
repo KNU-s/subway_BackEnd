@@ -15,6 +15,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/subway").setAllowedOrigins("*"); // endpoint 설정과 CORS 설정(*)
+        registry.addHandler(webSocketHandler, "/socket.subway").setAllowedOrigins("*"); // endpoint 설정과 CORS 설정(*)
     }
 }
