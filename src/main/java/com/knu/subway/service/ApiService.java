@@ -89,7 +89,6 @@ public class ApiService {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(dtos);
         if (responseBody == null || responseBody.isEmpty()) {
             return Collections.emptyList(); // or handle as needed
         }

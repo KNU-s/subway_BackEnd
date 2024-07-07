@@ -1,6 +1,8 @@
 package com.knu.subway.controller;
 
+import com.knu.subway.Dto;
 import com.knu.subway.entity.Subway;
+import com.knu.subway.service.ApiService;
 import com.knu.subway.service.SubwayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,12 @@ import java.util.List;
 @RestController
 public class SubwayApiController {
     private final SubwayService subwayService;
+    private final ApiService apiService;
+
+    @GetMapping("/{station}")
+    public List<Dto> getSubwayByStation(@PathVariable String station){
+        return apiService.getSubwayArrivals(station);
+    }
 
     @GetMapping
     public List<Subway> getAllSubways() {
