@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/subway-info")
-@CrossOrigin(origins = {"http://43.202.241.160:80", "http://localhost:3000"})
 @RestController
 public class SubwayInfoApiController {
     private final SubwayInfoService subwayInfoService;

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/api/v1/subway")
-@CrossOrigin(origins = {"http://43.202.241.160:80", "http://localhost:3000"})
 @RequiredArgsConstructor
 @RestController
 public class SubwayApiController {
