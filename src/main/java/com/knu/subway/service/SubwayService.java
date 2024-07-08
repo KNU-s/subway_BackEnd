@@ -47,11 +47,6 @@ public class SubwayService {
     }
 
     public List<Subway> findByStatnId(String statnId){
-        List<Subway> subwayList = subwayRepository.findByStatnId(statnId);
-        if(subwayList.isEmpty()){
-            log.info("Not Found StationId List");
-            throw new IllegalArgumentException("Not Found StationId List.");
-        }
         return subwayRepository.findByStatnId(statnId);
     }
 }
