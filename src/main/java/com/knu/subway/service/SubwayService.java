@@ -1,6 +1,6 @@
 package com.knu.subway.service;
 
-import com.knu.subway.Dto;
+import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.subwayEnum.SubwayLine;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
@@ -20,7 +20,7 @@ public class SubwayService {
         subwayRepository.save(subway);
         return subway.getId();
     }
-    public void update(String id, Dto subwayDto){
+    public void update(String id, SubwayDTO subwayDto){
         Subway findSubway = findSubwayById_orElseThrow(id);
         findSubway.setNextId(subwayDto.getNextId());
         findSubway.setPrevId(subwayDto.getPrevId());

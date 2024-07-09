@@ -1,6 +1,6 @@
 package com.knu.subway.controller;
 
-import com.knu.subway.Dto;
+import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.service.ApiService;
 import com.knu.subway.service.SubwayService;
@@ -17,7 +17,7 @@ public class SubwayApiController {
     private final ApiService apiService;
 
     @GetMapping("/station/{station}")
-    public List<Dto> getSubwayByStation(@PathVariable String station){
+    public List<SubwayDTO> getSubwayByStation(@PathVariable String station){
         return apiService.getSubwayArrivals(station);
     }
 

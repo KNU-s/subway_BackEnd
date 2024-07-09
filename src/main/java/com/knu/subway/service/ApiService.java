@@ -1,9 +1,7 @@
 package com.knu.subway.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.knu.subway.Dto;
-import com.knu.subway.entity.subwayEnum.SubwayLine;
-import com.knu.subway.entity.subwayEnum.TrainStatus;
+import com.knu.subway.entity.dto.SubwayDTO;
 import jakarta.annotation.PostConstruct;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +42,7 @@ public class ApiService {
         this.webClient = WebClient.create(baseUrl);
     }
 
-    public List<Dto> getSubwayArrivals(String stationName) {
+    public List<SubwayDTO> getSubwayArrivals(String stationName) {
         Mono<String> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
@@ -53,14 +50,14 @@ public class ApiService {
 
         String responseBody = response.block();
         System.out.println(responseBody);
-        var dtos = new ArrayList<Dto>();
+        var dtos = new ArrayList<SubwayDTO>();
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
             JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
             for (int i = 0; i < element.size(); i++) {
                 var tempEle = (JSONObject) element.get(i);
-                var dto = new Dto();
+                var dto = new SubwayDTO();
                 dto.setStatnId((String) tempEle.get("statnId"));
                 dto.setPrevId((String) tempEle.get("statnFid"));
                 dto.setPrevId((String) tempEle.get("statnTid"));
@@ -96,11 +93,11 @@ public class ApiService {
         return dtos;
     }
 
-    private List<Dto> parseResponse(String responseBody) {
+    private List<SubwayDTO> parseResponse(String responseBody) {
         try {
             // Parse JSON into a single Dto object (assuming JSON starts with an object, not array)
-            Dto dto = objectMapper.readValue(responseBody, Dto.class);
-            return Collections.singletonList(dto);
+            SubwayDTO subwayDTO = objectMapper.readValue(responseBody, SubwayDTO.class);
+            return Collections.singletonList(subwayDTO);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error parsing JSON response", e);
