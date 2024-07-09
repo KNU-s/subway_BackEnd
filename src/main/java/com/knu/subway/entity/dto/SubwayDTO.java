@@ -1,4 +1,4 @@
-package com.knu.subway;
+package com.knu.subway.entity.dto;
 
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.subwayEnum.SubwayLine;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Dto {
+public class SubwayDTO {
     private String statnId;
     private String prevId;
     //이전역 ID

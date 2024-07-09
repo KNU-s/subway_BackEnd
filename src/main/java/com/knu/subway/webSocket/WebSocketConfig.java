@@ -1,4 +1,4 @@
-package com.knu.subway.config;
+package com.knu.subway.webSocket;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/socket.subway").setAllowedOrigins("*"); // endpoint 설정과 CORS 설정(*)
+        registry.addHandler(webSocketHandler, "/socket.subway").setAllowedOrigins("http://43.202.241.160", "http://localhost:3000"); // endpoint 설정과 CORS 설정(*)
     }
 }
