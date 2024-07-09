@@ -27,4 +27,8 @@ public class SubwayInfoService {
     public void deleteById(String id) {
         subwayInfoRepository.deleteById(id);
     }
+
+    public List<SubwayInfo> findByStationName(String stationName){
+        return subwayInfoRepository.findBySubwayName(stationName);
+    }
 }
