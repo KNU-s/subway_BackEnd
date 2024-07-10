@@ -31,4 +31,7 @@ public class StationInfoService {
     public List<StationInfo> findByStationName(String stationName){
         return stationInfoRepository.findByStationName(stationName);
     }
+    public List<StationInfo> findByStationLine(String stationLine){
+        return stationInfoRepository.findByStationLine(stationLine);
+    }
 }
