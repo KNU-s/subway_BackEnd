@@ -17,8 +17,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
@@ -32,6 +34,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final SubwayService subwayService;
     private final JsonConverter jsonConverter;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
+    static boolean isStation = true;
     //메세지를 수신했을 때 실행
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -63,29 +66,48 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void sendSubwayData() {
         synchronized (sessionMap) {
             sessionMap.values().forEach(session -> {
-                String station = sessionStationMap.get(session);
-                if (station != null && !station.isEmpty()) {
-                    sendStationData(session, station);
+                String message = sessionStationMap.get(session);
+                if (message != null && !message.isEmpty()) {
+                    sendStationData(session, message);
                 }
             });
         }
     }
 
-    public void sendStationData(WebSocketSession session, String station) {
-        List<StationInfo> stationInfos = stationInfoService.findByStationName(station);
-        System.out.println(stationInfos);
-        if (!stationInfos.isEmpty()) {
-            try {
-                List<SubwayDTO> data = apiService.getSubwayArrivals(station);
-                log.info("Sending station data for station {}: {}", station, data);
+    public void sendStationData(WebSocketSession session, String message) {
+        try {
+            Set<StationInfo> stationInfos = getValidStationInfos(message);
 
-                List<String> jsonData = jsonConverter.convertToJsonList(data);
-                String jsonString = jsonConverter.joinJsonStrings(jsonData);
-                session.sendMessage(new TextMessage(jsonString));
-
-            } catch (Exception e) {
-                log.error("Error while sending station data for station {}: {}", station, e.getMessage(), e);
+            if (stationInfos != null && !stationInfos.isEmpty()) {
+                for (StationInfo info : stationInfos) {
+                    sendSubwayArrivals(session, info.getStationName());
+                }
+            } else {
+                log.warn("No valid station information found for message: {}", message);
             }
+        } catch (Exception e) {
+            log.error("Error while processing station data for message: {}", message, e);
+        }
+    }
+
+    private Set<StationInfo> getValidStationInfos(String message) {
+        List<StationInfo> stationInfos = stationInfoService.findByStationName(message);
+        if (stationInfos == null || stationInfos.isEmpty()) {
+            stationInfos = stationInfoService.findByStationLine(message);
+        }
+        return new HashSet<>(stationInfos);
+    }
+
+    private void sendSubwayArrivals(WebSocketSession session, String message) {
+        try {
+            List<SubwayDTO> data = apiService.getSubwayArrivals(message);
+            log.info("Sending station data for station {}: {}", message, data);
+
+            List<String> jsonData = jsonConverter.convertToJsonList(data);
+            String jsonString = jsonConverter.joinJsonStrings(jsonData);
+            session.sendMessage(new TextMessage(jsonString));
+        } catch (Exception e) {
+            log.error("Error while sending subway arrivals for station {}: {}", message, e.getMessage(), e);
         }
     }
 }
