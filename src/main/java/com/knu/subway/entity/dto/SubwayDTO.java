@@ -80,4 +80,22 @@ public class SubwayDTO {
                 .build();
         return subway;
     }
+
+    @Override
+    public String toString() {
+        return "SubwayDTO{" +
+                "statnId='" + statnId + '\'' +
+                ", prevId='" + prevId + '\'' +
+                ", nextId='" + nextId + '\'' +
+                ", dstStation='" + dstStation + '\'' +
+                ", transferStations=" + transferStations +
+                ", dstTime='" + dstTime + '\'' +
+                ", dstMessage1='" + dstMessage1 + '\'' +
+                ", dstMessage2='" + dstMessage2 + '\'' +
+                ", dstMessage3='" + dstMessage3 + '\'' +
+                ", trainStatus='" + trainStatus + '\'' +
+                ", updnLine='" + updnLine + '\'' +
+                ", subwayLine='" + subwayLine + '\'' +
+                '}';
+    }
 }
