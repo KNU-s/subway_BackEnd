@@ -6,11 +6,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @Getter
-@Document(collection = "subway_info")
-public class SubwayInfo {
+@Document(collection = "station_info")
+public class StationInfo {
     @Id
-    private String id;
-    private String subwayName;
-    private String subwayLine;
-    private Long subwayLineId;
+    private String stationId;
+    private String stationName;
+    private String stationLine;
+    private Long stationLineId;
 }

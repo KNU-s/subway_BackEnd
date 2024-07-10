@@ -1,10 +1,10 @@
 package com.knu.subway.webSocket;
 
-import com.knu.subway.entity.SubwayInfo;
+import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.helper.JsonConverter;
 import com.knu.subway.service.ApiService;
-import com.knu.subway.service.SubwayInfoService;
+import com.knu.subway.service.StationInfoService;
 import com.knu.subway.service.SubwayService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private static final Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
     private final Map<WebSocketSession, String> sessionStationMap = new ConcurrentHashMap<>();
     private final ApiService apiService;
-    private final SubwayInfoService subwayInfoService;
+    private final StationInfoService stationInfoService;
     private final SubwayService subwayService;
     private final JsonConverter jsonConverter;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
@@ -72,9 +72,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public void sendStationData(WebSocketSession session, String station) {
-        List<SubwayInfo> subwayInfos = subwayInfoService.findByStationName(station);
-        System.out.println(subwayInfos);
-        if (!subwayInfos.isEmpty()) {
+        List<StationInfo> stationInfos = stationInfoService.findByStationName(station);
+        System.out.println(stationInfos);
+        if (!stationInfos.isEmpty()) {
             try {
                 List<SubwayDTO> data = apiService.getSubwayArrivals(station);
                 log.info("Sending station data for station {}: {}", station, data);
