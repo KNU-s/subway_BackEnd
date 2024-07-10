@@ -2,12 +2,12 @@ package com.knu.subway.webSocket;
 
 import com.knu.subway.entity.SubwayInfo;
 import com.knu.subway.entity.dto.SubwayDTO;
+import com.knu.subway.helper.JsonConverter;
 import com.knu.subway.service.ApiService;
 import com.knu.subway.service.SubwayInfoService;
 import com.knu.subway.service.SubwayService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,31 +30,28 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ApiService apiService;
     private final SubwayInfoService subwayInfoService;
     private final SubwayService subwayService;
+    private final JsonConverter jsonConverter;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
-
+    //메세지를 수신했을 때 실행
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String receivedMessage = message.getPayload();
         log.info("Received Message: {}", receivedMessage);
-
         synchronized (sessionStationMap) {
             sessionStationMap.put(session, receivedMessage);
         }
     }
-
+    //연결 됐을 때 실행
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("WebSocket Connected");
         log.info("Session ID: {}", session.getId());
         sessionMap.put(session.getId(), session);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sessionId", session.getId());
-
-        session.sendMessage(new TextMessage(jsonObject.toString()));
+        session.sendMessage(new TextMessage(session.getId()));
     }
-
+    //연결이 종료 됐을 때 실행
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         log.info("WebSocket Disconnected");
         log.info("Session ID: {}", session.getId());
         sessionMap.remove(session.getId());
@@ -62,12 +59,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             sessionStationMap.remove(session);
         }
     }
-
     @Scheduled(fixedRate = 5000)
     public void sendSubwayData() {
         synchronized (sessionMap) {
             sessionMap.values().forEach(session -> {
-                System.out.println("TEST1");
                 String station = sessionStationMap.get(session);
                 if (station != null && !station.isEmpty()) {
                     sendStationData(session, station);
@@ -76,18 +71,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void sendStationData(WebSocketSession session, String station) {
+    public void sendStationData(WebSocketSession session, String station) {
         List<SubwayInfo> subwayInfos = subwayInfoService.findByStationName(station);
-        System.out.println("TEST2");
         System.out.println(subwayInfos);
         if (!subwayInfos.isEmpty()) {
-            System.out.println("TEST3");
             try {
                 List<SubwayDTO> data = apiService.getSubwayArrivals(station);
                 log.info("Sending station data for station {}: {}", station, data);
-                session.sendMessage(new TextMessage(data.toString()));
-                // Add logic to send data to the WebSocket session if needed
-                // session.sendMessage(new TextMessage(...));
+
+                List<String> jsonData = jsonConverter.convertToJsonList(data);
+                String jsonString = jsonConverter.joinJsonStrings(jsonData);
+                session.sendMessage(new TextMessage(jsonString));
+
             } catch (Exception e) {
                 log.error("Error while sending station data for station {}: {}", station, e.getMessage(), e);
             }
