@@ -34,11 +34,7 @@ public class ApiService {
 
     @PostConstruct
     private void init() {
-        String baseUrl = baseurl + apiKey + "/json/realtimeStationArrival/0/3";
-        System.out.println("TEST");
-        System.out.println(apiKey);
-        System.out.println(baseurl);
-
+        String baseUrl = baseurl + apiKey + "/json/realtimeStationArrival/0/5";
         this.webClient = WebClient.create(baseUrl);
     }
 
@@ -49,7 +45,6 @@ public class ApiService {
                 .bodyToMono(String.class);
 
         String responseBody = response.block();
-        System.out.println(responseBody);
         var dtos = new ArrayList<SubwayDTO>();
         try {
             JSONParser parser = new JSONParser();
@@ -69,17 +64,6 @@ public class ApiService {
                 dto.setTrainStatus((String)tempEle.get("arvlCd"));
                 dto.setUpdnLine((String) tempEle.get("updnLine"));
                 dto.setSubwayLine((String)tempEle.get("subwayId"));
-
-//                dto.setTrainLineNm((String) tempEle.get("trainLineNm"));
-//                dto.setStatnNm((String) tempEle.get("statnNm"));
-//                dto.setBarvlDt((String) tempEle.get("trainLineNm"));
-//                dto.setBtrainNo((String) tempEle.get("btrainNo"));
-//                dto.setBstatnId((String) tempEle.get("bstatnId"));
-//                dto.setBstatnNm((String) tempEle.get("bstatnNm"));
-//                dto.setRecptnDt((String) tempEle.get("recptnDt"));
-//                dto.setArvlMsg2((String) tempEle.get("arvlMsg2"));
-//                dto.setArvlMsg3((String) tempEle.get("arvlMsg3"));
-//                dto.setArvlCd((String) tempEle.get("arvlCd"));
                 dtos.add(dto);
             }
 
@@ -95,7 +79,6 @@ public class ApiService {
 
     private List<SubwayDTO> parseResponse(String responseBody) {
         try {
-            // Parse JSON into a single Dto object (assuming JSON starts with an object, not array)
             SubwayDTO subwayDTO = objectMapper.readValue(responseBody, SubwayDTO.class);
             return Collections.singletonList(subwayDTO);
         } catch (Exception e) {
