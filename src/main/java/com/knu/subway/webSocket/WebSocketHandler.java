@@ -78,7 +78,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         try {
             Set<StationInfo> stationInfos = getValidStationInfos(message);
 
-            if (stationInfos != null && !stationInfos.isEmpty()) {
+            if (!stationInfos.isEmpty()) {
                 for (StationInfo info : stationInfos) {
                     sendSubwayArrivals(session, info.getStationName());
                 }
