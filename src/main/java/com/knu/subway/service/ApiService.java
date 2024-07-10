@@ -1,8 +1,9 @@
 package com.knu.subway.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.dto.SubwayDTO;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,76 +15,77 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+@RequiredArgsConstructor
 @Service
 public class ApiService {
 
     private WebClient webClient;
-    private final ObjectMapper objectMapper;
+    private final StationInfoService stationInfoService;
+    private HashMap<String, String> stationNameHashMap;
+    private List<StationInfo> infoList;
+
 
     @Value("${subway.api.key}")
     private String apiKey;
 
     @Value("${subway.api.url}")
-    private String baseurl;
-
-    public ApiService(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
+    private String baseUrl;
     @PostConstruct
     private void init() {
-        String baseUrl = baseurl + apiKey + "/json/realtimeStationArrival/0/5";
-        this.webClient = WebClient.create(baseUrl);
+        String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/5";
+        this.webClient = WebClient.create(fullUrl);
+        this.infoList = stationInfoService.findAll();
+        this.stationNameHashMap = new HashMap<>();
+        for(StationInfo data : infoList){
+            stationNameHashMap.put(data.getStationId(), data.getStationName());
+        }
     }
 
     public List<SubwayDTO> getSubwayArrivals(String stationName) {
+        System.out.println(stationNameHashMap);
         Mono<String> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
                 .bodyToMono(String.class);
 
         String responseBody = response.block();
-        var dtos = new ArrayList<SubwayDTO>();
+
+        if (responseBody == null || responseBody.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return parseResponse(responseBody, stationNameHashMap);
+    }
+
+    private List<SubwayDTO> parseResponse(String responseBody, HashMap<String, String> stationNameHashMap) {
+        List<SubwayDTO> dtos = new ArrayList<>();
+
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
             JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
-            for (int i = 0; i < element.size(); i++) {
-                var tempEle = (JSONObject) element.get(i);
-                var dto = new SubwayDTO();
-                dto.setStatnId((String) tempEle.get("statnId"));
-                dto.setPrevId((String) tempEle.get("statnFid"));
-                dto.setPrevId((String) tempEle.get("statnTid"));
-//                dto.setTransferStations(Arrays.stream(((String)tempEle.get("tmsitCo")).split(",")).toList());
+
+            for (Object o : element) {
+                JSONObject tempEle = (JSONObject) o;
+                SubwayDTO dto = new SubwayDTO();
+                dto.setStatnId(stationNameHashMap.get((String) tempEle.get("statnId")));
+                dto.setPrevId(stationNameHashMap.get((String) tempEle.get("statnFid")));
+                dto.setNextId(stationNameHashMap.get((String) tempEle.get("statnTid")));
                 dto.setDstStation((String) tempEle.get("trainLineNm"));
                 dto.setDstTime((String) tempEle.get("barvlDt"));
                 dto.setDstMessage1((String) tempEle.get("arvlMsg2"));
                 dto.setDstMessage2((String) tempEle.get("arvlMsg3"));
-                dto.setTrainStatus((String)tempEle.get("arvlCd"));
+                dto.setTrainStatus((String) tempEle.get("arvlCd"));
                 dto.setUpdnLine((String) tempEle.get("updnLine"));
-                dto.setSubwayLine((String)tempEle.get("subwayId"));
+                dto.setSubwayLine((String) tempEle.get("subwayId"));
                 dtos.add(dto);
             }
-
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-        if (responseBody == null || responseBody.isEmpty()) {
-            return Collections.emptyList(); // or handle as needed
-        }
 
         return dtos;
-    }
-
-    private List<SubwayDTO> parseResponse(String responseBody) {
-        try {
-            SubwayDTO subwayDTO = objectMapper.readValue(responseBody, SubwayDTO.class);
-            return Collections.singletonList(subwayDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error parsing JSON response", e);
-        }
     }
 }

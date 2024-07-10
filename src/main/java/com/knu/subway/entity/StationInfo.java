@@ -12,6 +12,7 @@ import java.util.Objects;
 @Document(collection = "station_info")
 public class StationInfo {
     @Id
+    private String id;
     private String stationId;
     private String stationName;
     private String stationLine;

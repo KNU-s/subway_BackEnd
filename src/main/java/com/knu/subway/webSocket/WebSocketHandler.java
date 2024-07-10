@@ -34,7 +34,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final SubwayService subwayService;
     private final JsonConverter jsonConverter;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
-    static boolean isStation = true;
     //메세지를 수신했을 때 실행
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -101,8 +100,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void sendSubwayArrivals(WebSocketSession session, String message) {
         try {
             List<SubwayDTO> data = apiService.getSubwayArrivals(message);
-            log.info("Sending station data for station {}: {}", message, data);
-
+//            log.info("Sending station data for station {}: {}", message, data);
             List<String> jsonData = jsonConverter.convertToJsonList(data);
             String jsonString = jsonConverter.joinJsonStrings(jsonData);
             session.sendMessage(new TextMessage(jsonString));
