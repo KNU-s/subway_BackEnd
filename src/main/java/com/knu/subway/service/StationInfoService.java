@@ -29,6 +29,6 @@ public class StationInfoService {
     }
 
     public List<StationInfo> findByStationName(String stationName){
-        return stationInfoRepository.findBySubwayName(stationName);
+        return stationInfoRepository.findByStationName(stationName);
     }
 }
