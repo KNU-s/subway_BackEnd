@@ -30,7 +30,7 @@ public class StationInfoApiController {
     @PutMapping("/{id}")
     public StationInfo updateSubwayInfo(@PathVariable String id, @RequestBody StationInfo stationInfo) {
         // Ensure the ID in the path and in the request body match
-        stationInfo.setId(id);
+        stationInfo.setStationId(id);
         return stationInfoService.save(stationInfo);
     }
 

@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface StationInfoRepository extends MongoRepository<StationInfo, String> {
-    List<StationInfo> findBySubwayName(String subwayName);
+    List<StationInfo> findByStationName(String stationName);
 }
