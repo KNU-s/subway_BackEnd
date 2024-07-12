@@ -8,6 +8,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,6 +27,7 @@ public class ApiService {
     private final StationInfoService stationInfoService;
     private HashMap<String, String> stationNameHashMap;
     private List<StationInfo> infoList;
+    private static final Logger log = LoggerFactory.getLogger(ApiService.class);
 
 
     @Value("${subway.api.key}")
@@ -44,7 +47,6 @@ public class ApiService {
     }
 
     public List<SubwayDTO> getSubwayArrivals(String stationName) {
-        System.out.println(stationNameHashMap);
         Mono<String> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
@@ -56,20 +58,21 @@ public class ApiService {
             return Collections.emptyList();
         }
 
-        return parseResponse(responseBody, stationNameHashMap);
+        return parseResponse(responseBody, stationNameHashMap, stationName);
     }
 
-    private List<SubwayDTO> parseResponse(String responseBody, HashMap<String, String> stationNameHashMap) {
+    private List<SubwayDTO> parseResponse(String responseBody, HashMap<String, String> stationNameHashMap, String currentStation) {
         List<SubwayDTO> dtos = new ArrayList<>();
 
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
             JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
+            SubwayDTO dto = new SubwayDTO();
+            dto.setCurrentStation(currentStation);
 
             for (Object o : element) {
                 JSONObject tempEle = (JSONObject) o;
-                SubwayDTO dto = new SubwayDTO();
                 dto.setStatnId(stationNameHashMap.get((String) tempEle.get("statnId")));
                 dto.setPrevId(stationNameHashMap.get((String) tempEle.get("statnFid")));
                 dto.setNextId(stationNameHashMap.get((String) tempEle.get("statnTid")));
@@ -80,10 +83,11 @@ public class ApiService {
                 dto.setTrainStatus((String) tempEle.get("arvlCd"));
                 dto.setUpdnLine((String) tempEle.get("updnLine"));
                 dto.setSubwayLine((String) tempEle.get("subwayId"));
+                dto.setTrainId((String) tempEle.get("btrainNo"));
                 dtos.add(dto);
             }
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            log.error("Error while json converter : {}", e.getMessage(), e);
         }
 
         return dtos;

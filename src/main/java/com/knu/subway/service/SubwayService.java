@@ -21,15 +21,16 @@ public class SubwayService {
         return subway.getId();
     }
     public void update(String id, SubwayDTO subwayDto){
-        Subway findSubway = findSubwayById_orElseThrow(id);
-        findSubway.setNextId(subwayDto.getNextId());
-        findSubway.setPrevId(subwayDto.getPrevId());
-        findSubway.setDstTime(subwayDto.getDstTime());
-        findSubway.setDstMessage1(subwayDto.getDstMessage1());
-        findSubway.setDstMessage2(subwayDto.getDstMessage2());
-        findSubway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()));
-        findSubway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()));
-        subwayRepository.save(findSubway);
+        Subway subway = findSubwayById_orElseThrow(id);
+        subway.setNextId(subwayDto.getNextId());
+        subway.setPrevId(subwayDto.getPrevId());
+        subway.setDstTime(subwayDto.getDstTime());
+        subway.setDstMessage1(subwayDto.getDstMessage1());
+        subway.setDstMessage2(subwayDto.getDstMessage2());
+        subway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()));
+        subway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()));
+        subway.setCurrentStation(subwayDto.getCurrentStation());
+        subwayRepository.save(subway);
     }
 
     public Subway findSubwayById_orElseThrow(String id){
@@ -48,5 +49,9 @@ public class SubwayService {
 
     public List<Subway> findByStatnId(String statnId){
         return subwayRepository.findByStatnId(statnId);
+    }
+
+    public List<Subway> findByTrainId(String trainId){
+        return subwayRepository.findByTrainId(trainId);
     }
 }

@@ -1,6 +1,7 @@
 package com.knu.subway.webSocket;
 
 import com.knu.subway.entity.StationInfo;
+import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.helper.JsonConverter;
 import com.knu.subway.service.ApiService;
@@ -101,11 +102,24 @@ public class WebSocketHandler extends TextWebSocketHandler {
         try {
             List<SubwayDTO> data = apiService.getSubwayArrivals(message);
 //            log.info("Sending station data for station {}: {}", message, data);
+            saveSubwayInfo(data);
             List<String> jsonData = jsonConverter.convertToJsonList(data);
             String jsonString = jsonConverter.joinJsonStrings(jsonData);
             session.sendMessage(new TextMessage(jsonString));
         } catch (Exception e) {
             log.error("Error while sending subway arrivals for station {}: {}", message, e.getMessage(), e);
+        }
+    }
+
+    private void saveSubwayInfo(List<SubwayDTO> subwayDTO){
+        for(SubwayDTO data : subwayDTO){
+            Subway subway = data.toEntity();
+            List<Subway> trainId = subwayService.findByTrainId(subway.getTrainId());
+            if(trainId.isEmpty()){
+                subwayService.save(subway);
+            } else {
+                subwayService.update(subway.getId(), data);
+            }
         }
     }
 }

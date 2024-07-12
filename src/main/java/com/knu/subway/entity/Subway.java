@@ -4,16 +4,20 @@ import com.knu.subway.entity.subwayEnum.SubwayLine;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+@Setter
 @Getter
 @Document(collection = "subway")
 public class Subway {
     @Id
     private String id;
+    private String trainId;
     private String statnId;
+    private String currentStation;
     //다음역 ID
     private String prevId;
     //이전역 ID
@@ -37,7 +41,7 @@ public class Subway {
 //    @Enumerated(EnumType.STRING)
     private SubwayLine subwayLine;
     @Builder
-    public Subway(String id,String statnId, String prevId, String nextId, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, SubwayLine subwayLine) {
+    public Subway(String id,String currentStation, String statnId, String prevId, String nextId, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, SubwayLine subwayLine,String trainId) {
         this.id = id;
         this.statnId = statnId;
         this.prevId = prevId;
@@ -50,41 +54,9 @@ public class Subway {
         this.dstMessage3 = dstMessage3;
         this.trainStatus = trainStatus;
         this.updnLine = updnLine;
+        this.trainId = trainId;
         this.subwayLine = subwayLine;
-    }
-
-
-
-    public void setPrevId(String prevId) {
-        this.prevId = prevId;
-    }
-
-    public void setNextId(String nextId) {
-        this.nextId = nextId;
-    }
-
-    public void setDstTime(String dstTime) {
-        this.dstTime = dstTime;
-    }
-
-    public void setDstMessage1(String dstMessage1) {
-        this.dstMessage1 = dstMessage1;
-    }
-
-    public void setDstMessage2(String dstMessage2) {
-        this.dstMessage2 = dstMessage2;
-    }
-
-    public void setDstMessage3(String dstMessage3) {
-        this.dstMessage3 = dstMessage3;
-    }
-
-    public void setTrainStatus(TrainStatus trainStatus) {
-        this.trainStatus = trainStatus;
-    }
-
-    public void setSubwayLine(SubwayLine subwayLine) {
-        this.subwayLine = subwayLine;
+        this.currentStation = currentStation;
     }
 
     public Subway() {
