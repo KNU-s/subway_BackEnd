@@ -20,6 +20,10 @@ public class SubwayApiController {
     public List<SubwayDTO> getSubwayByStation(@PathVariable String station){
         return apiService.getSubwayArrivals(station);
     }
+    @GetMapping("/stationLine/{stationLine}")
+    public List<Subway> getSubwayByStationLine(@PathVariable("stationLine") String stationLine){
+        return subwayService.findByStationLine(stationLine);
+    }
 
     @GetMapping
     public List<Subway> getAllSubways() {

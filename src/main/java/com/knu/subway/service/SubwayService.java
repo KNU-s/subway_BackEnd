@@ -54,4 +54,9 @@ public class SubwayService {
     public List<Subway> findByTrainId(String trainId){
         return subwayRepository.findByTrainId(trainId);
     }
+
+    public List<Subway> findByStationLine(String stationLine) {
+        return subwayRepository.findBySubwayLine(stationLine);
+    }
+
 }
