@@ -13,8 +13,8 @@ import java.util.List;
 public class SubwayDTO {
     private String currentStation;
     private String statnId;
-    private String prevId;
-    private String nextId;
+    private String prevStationName;
+    private String nextStationName;
     private String dstStation;
     private String trainId;
     private List<String> transferStations;
@@ -31,8 +31,8 @@ public class SubwayDTO {
         return "SubwayDTO{" +
                 "currentStation='" + currentStation + '\'' +
                 ", statnId='" + statnId + '\'' +
-                ", prevId='" + prevId + '\'' +
-                ", nextId='" + nextId + '\'' +
+                ", prevId='" + prevStationName + '\'' +
+                ", nextId='" + nextStationName + '\'' +
                 ", dstStation='" + dstStation + '\'' +
                 ", trainId='" + trainId + '\'' +
                 ", transferStations=" + transferStations +
@@ -49,8 +49,8 @@ public class SubwayDTO {
     public Subway toEntity() {
         return Subway.builder()
                 .statnId(this.statnId)
-                .prevId(this.prevId)
-                .nextId(this.nextId)
+                .prevStationName(this.prevStationName)
+                .nextStationName(this.nextStationName)
                 .dstStation(this.dstStation)
                 .trainId(this.trainId)
                 .transferStations(this.transferStations)

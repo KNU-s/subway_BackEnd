@@ -22,8 +22,8 @@ public class SubwayService {
     }
     public void update(String id, SubwayDTO subwayDto){
         Subway subway = findSubwayById_orElseThrow(id);
-        subway.setNextId(subwayDto.getNextId());
-        subway.setPrevId(subwayDto.getPrevId());
+        subway.setNextStationName(subwayDto.getNextStationName());
+        subway.setPrevStationName(subwayDto.getPrevStationName());
         subway.setDstTime(subwayDto.getDstTime());
         subway.setDstMessage1(subwayDto.getDstMessage1());
         subway.setDstMessage2(subwayDto.getDstMessage2());
