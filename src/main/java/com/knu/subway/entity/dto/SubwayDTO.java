@@ -25,14 +25,16 @@ public class SubwayDTO {
     private String trainStatus;
     private String updnLine;
     private String subwayLine;
-
+    private String direction;
     @Override
     public String toString() {
         return "SubwayDTO{" +
-                "statnId='" + statnId + '\'' +
+                "currentStation='" + currentStation + '\'' +
+                ", statnId='" + statnId + '\'' +
                 ", prevId='" + prevId + '\'' +
                 ", nextId='" + nextId + '\'' +
                 ", dstStation='" + dstStation + '\'' +
+                ", trainId='" + trainId + '\'' +
                 ", transferStations=" + transferStations +
                 ", dstTime='" + dstTime + '\'' +
                 ", dstMessage1='" + dstMessage1 + '\'' +
@@ -41,9 +43,9 @@ public class SubwayDTO {
                 ", trainStatus='" + trainStatus + '\'' +
                 ", updnLine='" + updnLine + '\'' +
                 ", subwayLine='" + subwayLine + '\'' +
+                ", direction='" + direction + '\'' +
                 '}';
     }
-
     public Subway toEntity() {
         return Subway.builder()
                 .statnId(this.statnId)
@@ -60,6 +62,7 @@ public class SubwayDTO {
                 .updnLine(this.updnLine)
                 .subwayLine(SubwayLine.fromCode(this.subwayLine)) // Assuming SubwayLine is an enum
                 .currentStation(this.currentStation)
+                .direction(this.direction)
                 .build();
     }
 }

@@ -35,13 +35,14 @@ public class Subway {
     private String dstMessage3;
     // (0:진입, 1:도착, 2:출발, 3:전역 출발, 4:전역 진입, 5:전역 도착, 99:운행중)
 //    @Enumerated(EnumType.STRING)
-    private TrainStatus trainStatus;
+    private String trainStatus;
     // (0 : 상행/내선, 1 : 하행/외선)
     private String updnLine;
 //    @Enumerated(EnumType.STRING)
-    private SubwayLine subwayLine;
+    private String subwayLine;
+    private String direction;
     @Builder
-    public Subway(String id,String currentStation, String statnId, String prevId, String nextId, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, SubwayLine subwayLine,String trainId) {
+    public Subway(String id,String currentStation, String statnId, String prevId, String nextId, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, SubwayLine subwayLine,String trainId,String direction) {
         this.id = id;
         this.statnId = statnId;
         this.prevId = prevId;
@@ -52,11 +53,12 @@ public class Subway {
         this.dstMessage1 = dstMessage1;
         this.dstMessage2 = dstMessage2;
         this.dstMessage3 = dstMessage3;
-        this.trainStatus = trainStatus;
+        this.trainStatus = trainStatus.getDescription();
         this.updnLine = updnLine;
         this.trainId = trainId;
-        this.subwayLine = subwayLine;
+        this.subwayLine = subwayLine.getName();
         this.currentStation = currentStation;
+        this.direction = direction;
     }
 
     public Subway() {

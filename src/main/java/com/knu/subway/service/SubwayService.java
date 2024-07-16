@@ -27,8 +27,8 @@ public class SubwayService {
         subway.setDstTime(subwayDto.getDstTime());
         subway.setDstMessage1(subwayDto.getDstMessage1());
         subway.setDstMessage2(subwayDto.getDstMessage2());
-        subway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()));
-        subway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()));
+        subway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()).getDescription());
+        subway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()).getName());
         subway.setCurrentStation(subwayDto.getCurrentStation());
         subwayRepository.save(subway);
     }
@@ -57,6 +57,10 @@ public class SubwayService {
 
     public List<Subway> findByStationLine(String stationLine) {
         return subwayRepository.findBySubwayLine(stationLine);
+    }
+
+    public void saveAll(List<Subway> subways){
+        subwayRepository.saveAll(subways);
     }
 
 }
