@@ -29,7 +29,6 @@ public class ApiService {
     private List<StationInfo> infoList;
     private static final Logger log = LoggerFactory.getLogger(ApiService.class);
 
-
     @Value("${subway.api.key}")
     private String apiKey;
 
@@ -68,28 +67,31 @@ public class ApiService {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
             JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
-            SubwayDTO dto = new SubwayDTO();
-            dto.setCurrentStation(currentStation);
 
-            for (Object o : element) {
-                JSONObject tempEle = (JSONObject) o;
-                dto.setStatnId(stationNameHashMap.get((String) tempEle.get("statnId")));
-                dto.setPrevId(stationNameHashMap.get((String) tempEle.get("statnFid")));
-                dto.setNextId(stationNameHashMap.get((String) tempEle.get("statnTid")));
-                dto.setDstStation((String) tempEle.get("trainLineNm"));
-                dto.setDstTime((String) tempEle.get("barvlDt"));
-                dto.setDstMessage1((String) tempEle.get("arvlMsg2"));
-                dto.setDstMessage2((String) tempEle.get("arvlMsg3"));
-                dto.setTrainStatus((String) tempEle.get("arvlCd"));
-                dto.setUpdnLine((String) tempEle.get("updnLine"));
-                dto.setSubwayLine((String) tempEle.get("subwayId"));
-                dto.setTrainId((String) tempEle.get("btrainNo"));
-                dtos.add(dto);
+            if (element != null && !element.isEmpty()) {
+                for (Object o : element) {
+                    JSONObject tempEle = (JSONObject) o;
+                    SubwayDTO dto = new SubwayDTO();
+                    String[] dst = ((String) tempEle.get("trainLineNm")).replaceAll(" ","").split("-");
+                    dto.setStatnId(stationNameHashMap.get((String) tempEle.get("statnId")));
+                    dto.setPrevId(stationNameHashMap.get((String) tempEle.get("statnFid")));
+                    dto.setNextId(stationNameHashMap.get((String) tempEle.get("statnTid")));
+                    dto.setDstStation(dst[0]);
+                    dto.setDirection(dst[1]);
+                    dto.setDstMessage1((String) tempEle.get("arvlMsg2"));
+                    dto.setDstMessage2((String) tempEle.get("arvlMsg3"));
+                    dto.setTrainStatus((String) tempEle.get("arvlCd"));
+                    dto.setUpdnLine((String) tempEle.get("updnLine"));
+                    dto.setSubwayLine((String) tempEle.get("subwayId"));
+                    dto.setTrainId((String) tempEle.get("btrainNo"));
+                    dtos.add(dto);
+                }
             }
         } catch (ParseException e) {
-            log.error("Error while json converter : {}", e.getMessage(), e);
+            log.error("Error while parsing JSON response: {}", e.getMessage(), e);
         }
 
         return dtos;
     }
+
 }
