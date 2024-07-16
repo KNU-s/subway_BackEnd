@@ -17,7 +17,7 @@ public class SubwayApiController {
     private final ApiService apiService;
 
     @GetMapping("/station/{station}")
-    public List<SubwayDTO> getSubwayByStation(@PathVariable String station){
+    public List<SubwayDTO> getSubwayByStation(@PathVariable("station") String station){
         return apiService.getSubwayArrivals(station);
     }
     @GetMapping("/stationLine/{stationLine}")
