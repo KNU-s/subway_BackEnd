@@ -2,7 +2,6 @@ package com.knu.subway.service;
 
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
-import com.knu.subway.entity.subwayEnum.SubwayLine;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import com.knu.subway.repository.SubwayRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +19,15 @@ public class SubwayService {
         subwayRepository.save(subway);
         return subway.getId();
     }
-    public void update(String id, SubwayDTO subwayDto){
-        Subway subway = findSubwayById_orElseThrow(id);
+    public Subway update(Subway subway, SubwayDTO subwayDto){
+        subway.setStatnId(subwayDto.getStatnId());
         subway.setNextStationName(subwayDto.getNextStationName());
         subway.setPrevStationName(subwayDto.getPrevStationName());
         subway.setDstTime(subwayDto.getDstTime());
         subway.setDstMessage1(subwayDto.getDstMessage1());
         subway.setDstMessage2(subwayDto.getDstMessage2());
         subway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()).getDescription());
-        subway.setSubwayLine(SubwayLine.fromCode(subwayDto.getSubwayLine()).getName());
-        subway.setCurrentStation(subwayDto.getCurrentStation());
-        subwayRepository.save(subway);
+        return subway;
     }
 
     public Subway findSubwayById_orElseThrow(String id){
@@ -42,6 +39,10 @@ public class SubwayService {
         return subwayRepository.findAll();
     }
 
+    public void delete(Subway subway) {
+        subwayRepository.delete(subway);
+        log.info("Delete Subway :{}", subway.getStatnId());
+    }
     public void deleteById(String id) {
         subwayRepository.deleteById(id);
         log.info("Delete Subway id :{}", id);
