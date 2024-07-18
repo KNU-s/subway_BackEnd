@@ -64,4 +64,8 @@ public class SubwayService {
         subwayRepository.saveAll(subways);
     }
 
+    public void deleteAll(){
+        subwayRepository.deleteAll();;
+    }
+
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,12 +40,12 @@ public class SubwayDataCollector {
 
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-//    @Scheduled(fixedRate = 10000)  // 10초마다 데이터 수집
+    @Scheduled(fixedRate = 10000)  // 10초마다 데이터 수집
     public void collectData() {
         stationList.forEach(this::collectDataByLineAsync); // 비동기 메서드 호출
     }
 
-//    @Scheduled(fixedRate = 1800000)  // 30분마다 쿠키 초기화
+    @Scheduled(fixedRate = 1800000)  // 30분마다 쿠키 초기화
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie = new ArrayList<>();
@@ -61,6 +62,11 @@ public class SubwayDataCollector {
                 });
     }
 
+    @Scheduled(fixedRate = 10800000) // 3 hours in milliseconds
+    public void deleteAllSubways() {
+        subwayService.deleteAll();
+        System.out.println("Deleted all subway entries");
+    }
     private void saveSubwayInfo(List<SubwayDTO> subwayDTO){
         subways = new ArrayList<>();
         for(SubwayDTO data : subwayDTO){
