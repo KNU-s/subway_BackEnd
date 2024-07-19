@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,31 +66,38 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Deleted all subway entries");
     }
-    private void saveSubwayInfo(List<SubwayDTO> subwayDTO){
-        subways = new ArrayList<>();
-        for(SubwayDTO data : subwayDTO){
+    private void saveSubwayInfo(List<SubwayDTO> subwayDTOList) {
+        List<Subway> subwaysToSave = new ArrayList<>();
+
+        for (SubwayDTO data : subwayDTOList) {
             Subway subway = data.toEntity();
-            //도착지 역, 현재 역
             String dstStation = subway.getDstStation();
             String curStation = subway.getStatnId();
             String trainStatus = subway.getTrainStatus();
-            List<Subway> trainId = subwayService.findByTrainId(subway.getTrainId());
-            if(trainId.isEmpty()) {
-                if(!subwayCookie.contains(subway.getTrainId())){
-                    subways.add(subway);
+            List<Subway> existingTrains = subwayService.findByTrainId(subway.getTrainId());
+
+            if (existingTrains.isEmpty()) {
+                if (!subwayCookie.contains(subway.getTrainId())) {
+                    subwaysToSave.add(subway);
                 }
             } else {
-                // dstStation과 curStation이 null이 아닌지 확인
-                if (dstStation != null && curStation != null && trainStatus != null) {
-                    if(dstStation.contains(curStation) && Objects.equals(trainStatus, "도착")){
-                        subwayService.delete(trainId.get(0));
-                        subwayCookie.add(trainId.get(0).getTrainId());
-                        continue;
-                    }
+                if (shouldDeleteExistingTrain(dstStation, curStation, trainStatus)) {
+                    Subway existingTrain = existingTrains.get(0);
+                    subwayService.delete(existingTrain);
+                    subwayCookie.add(existingTrain.getTrainId());
+                } else {
+                    Subway updatedSubway = subwayService.update(existingTrains.get(0), data);
+                    subwaysToSave.add(updatedSubway);
                 }
-                subways.add(subwayService.update(trainId.get(0), data));
             }
         }
-        subwayService.saveAll(subways);
+
+        subwayService.saveAll(subwaysToSave);
     }
+
+    private boolean shouldDeleteExistingTrain(String dstStation, String curStation, String trainStatus) {
+        return dstStation != null && curStation != null && trainStatus != null &&
+                dstStation.contains(curStation) && "도착".equals(trainStatus);
+    }
+
 }
