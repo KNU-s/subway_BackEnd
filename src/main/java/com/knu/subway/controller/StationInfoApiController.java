@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/subway-info")
+@RequestMapping("/api/v1/station-info")
 @RestController
 public class StationInfoApiController {
     private final StationInfoService stationInfoService;
