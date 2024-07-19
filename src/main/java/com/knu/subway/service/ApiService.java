@@ -57,10 +57,10 @@ public class ApiService {
             return Collections.emptyList();
         }
 
-        return parseResponse(responseBody, stationNameHashMap, stationName);
+        return parseResponse(responseBody, stationNameHashMap);
     }
 
-    private List<SubwayDTO> parseResponse(String responseBody, HashMap<String, String> stationNameHashMap, String currentStation) {
+    private List<SubwayDTO> parseResponse(String responseBody, HashMap<String, String> stationNameHashMap) {
         List<SubwayDTO> subwayDTOList = new ArrayList<>();
 
         try {
