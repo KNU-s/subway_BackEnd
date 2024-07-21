@@ -1,5 +1,6 @@
 package com.knu.subway.webSocket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.helper.JsonConverter;
 import com.knu.subway.service.ApiService;
@@ -72,26 +73,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
     public void sendData(WebSocketSession session, String message) {
-        StringBuilder sb = new StringBuilder();
         try {
             List<Subway> subwayList = subwayService.findByStationLine(message);
             if (!subwayList.isEmpty()) {
-                for (Subway subway : subwayList) {
-                    sb.append("{")
-                            .append("\"trainId\":\"").append(subway.getTrainId()).append("\",")
-                            .append("\"statnId\":\"").append(subway.getStatnId()).append("\",")
-                            .append("\"prevStationName\":\"").append(subway.getPrevStationName()).append("\",")
-                            .append("\"nextStationName\":\"").append(subway.getNextStationName()).append("\",")
-                            .append("\"dstStation\":\"").append(subway.getDstStation()).append("\",")
-                            .append("\"dstMessage1\":\"").append(subway.getDstMessage1()).append("\",")
-                            .append("\"dstMessage2\":\"").append(subway.getDstMessage2()).append("\",")
-                            .append("\"trainStatus\":\"").append(subway.getTrainStatus()).append("\",")
-                            .append("\"updnLine\":\"").append(subway.getUpdnLine()).append("\",")
-                            .append("\"subwayLine\":\"").append(subway.getSubwayLine()).append("\",")
-                            .append("\"direction\":\"").append(subway.getDirection()).append("\",")
-                            .append("}");
-                }
-                session.sendMessage(new TextMessage(sb.toString()));
+                ObjectMapper objectMapper = new ObjectMapper();
+                String json = objectMapper.writeValueAsString(subwayList);
+                session.sendMessage(new TextMessage(json));
+                log.info("Send Subway Message: {}", json);
             } else {
                 log.warn("No valid station information found for message: {}", message);
             }
