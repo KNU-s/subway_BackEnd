@@ -84,6 +84,7 @@ public class ApiService {
                     subwayDTO.setUpdnLine((String) tempEle.get("updnLine"));
                     subwayDTO.setSubwayLine((String) tempEle.get("subwayId"));
                     subwayDTO.setTrainId((String) tempEle.get("btrainNo"));
+                    subwayDTO.setTrainType((String) tempEle.get("btrainSttus"));
                     subwayDTOList.add(subwayDTO);
                 }
             }

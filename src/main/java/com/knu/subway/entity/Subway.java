@@ -1,6 +1,5 @@
 package com.knu.subway.entity;
 
-import com.knu.subway.entity.subwayEnum.SubwayLine;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,8 +37,9 @@ public class Subway {
     private String updnLine;
     private String subwayLine;
     private String direction;
+    private String trainType;
     @Builder
-    public Subway(String id,String currentStation, String statnId, String prevStationName, String nextStationName, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, SubwayLine subwayLine,String trainId,String direction) {
+    public Subway(String id,String currentStation, String statnId, String prevStationName, String nextStationName, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, String subwayLine,String trainId,String direction, String trainType) {
         this.id = id;
         this.statnId = statnId;
         this.prevStationName = prevStationName;
@@ -53,9 +53,10 @@ public class Subway {
         this.trainStatus = trainStatus.getDescription();
         this.updnLine = updnLine;
         this.trainId = trainId;
-        this.subwayLine = subwayLine.getName();
+        this.subwayLine = subwayLine;
         this.currentStation = currentStation;
         this.direction = direction;
+        this.trainType = trainType;
     }
 
     public Subway() {
