@@ -65,23 +65,23 @@ public class SubwayDataCollector {
         List<Subway> subwaysToSave = new ArrayList<>();
         for (SubwayDTO data : subwayDTOList) {
             Subway subway = data.toEntity();
-            String dstStation = subway.getDstStation();
-            String curStation = subway.getStatnId();
-            String trainStatus = subway.getTrainStatus();
-            List<Subway> existingTrains = subwayService.findByTrainId(subway.getTrainId());
-            //열차번호가 존재하지 않는다면
+            String dstStation = subway.getBstatnNm();
+            String curStation = subway.getStatnNm();
+            String trainStatus = subway.getArvlStatus();
+            List<Subway> existingTrains = subwayService.findByBtrainNo(subway.getBtrainNo());
+            //열차번호가 존재하지 않는다면(즉 처음 추가 된 열차라면)
             if (existingTrains.isEmpty()) {
                 //최근에 삭제된 열차가 아니라면
-                if (!subwayCookie.contains(subway.getTrainId())) {
+                if (!subwayCookie.contains(subway.getBtrainNo())) {
                     subwaysToSave.add(subway);
                 }
-            //열자번호가 존재한다면
+            //열자번호가 존재한다면(이미 열차가 운행중이라면)
             } else {
                 //현재 열차가 도착 상태이고, 마지막 역 까지 도달했다면
                 if (shouldDeleteExistingTrain(dstStation, curStation, trainStatus)) {
                     Subway existingTrain = existingTrains.get(0);
                     subwayService.delete(existingTrain);
-                    subwayCookie.add(existingTrain.getTrainId());
+                    subwayCookie.add(existingTrain.getBtrainNo());
                 } else {
                     Subway updatedSubway = subwayService.update(existingTrains.get(0), data);
                     subwaysToSave.add(updatedSubway);

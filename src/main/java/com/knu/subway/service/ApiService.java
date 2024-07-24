@@ -71,7 +71,6 @@ public class ApiService {
                 for (Object o : element) {
                     JSONObject tempEle = (JSONObject) o;
                     SubwayDTO subwayDTO = new SubwayDTO();
-                    String[] dst = ((String) tempEle.get("trainLineNm")).replaceAll(" ", "").split("-");
 
                     // Fetch values from stationNameHashMap with null safety
                     String statnId = (String) tempEle.get("statnId");
@@ -93,23 +92,21 @@ public class ApiService {
                     }
 
                     // Set defaults if stationNameHashMap.get returns null
-                    subwayDTO.setStatnId(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
-                    subwayDTO.setPrevStationName(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
-                    subwayDTO.setNextStationName(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
+                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
+                    subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
+                    subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
 
-                    subwayDTO.setDstStation(dst.length > 0 ? dst[0] : "Unknown");
-                    subwayDTO.setDirection(dst.length > 1 ? dst[1] : "Unknown");
+                    subwayDTO.setBstatnNm((String) tempEle.get("bstatnNm"));
 
-                    subwayDTO.setDstMessage1((String) tempEle.get("arvlMsg2"));
-//                    subwayDTO.setDstMessage2((String) tempEle.get("arvlMsg3"));
-                    subwayDTO.setTrainStatus((String) tempEle.get("arvlCd"));
+                    subwayDTO.setArvlMsg((String) tempEle.get("arvlMsg2"));
+                    subwayDTO.setArvlStatus((String) tempEle.get("arvlCd"));
                     subwayDTO.setUpdnLine((String) tempEle.get("updnLine"));
 
                     // Set subway line, with default if stationNameHashMap.get returns null
                     subwayDTO.setSubwayLine(stationIdInfo != null ? stationIdInfo[1] : "Unknown");
 
-                    subwayDTO.setTrainId((String) tempEle.get("btrainNo"));
-                    subwayDTO.setTrainType((String) tempEle.get("btrainSttus"));
+                    subwayDTO.setBtrainNo((String) tempEle.get("btrainNo"));
+                    subwayDTO.setBtrainSttus((String) tempEle.get("btrainSttus"));
                     subwayDTOList.add(subwayDTO);
                 }
             }

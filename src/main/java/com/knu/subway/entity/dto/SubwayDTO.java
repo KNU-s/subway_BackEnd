@@ -5,66 +5,50 @@ import com.knu.subway.entity.subwayEnum.TrainStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 public class SubwayDTO {
-    private String currentStation;
-    private String statnId;
-    private String prevStationName;
-    private String nextStationName;
-    private String dstStation;
-    private String trainId;
-    private List<String> transferStations;
-    private String dstTime;
-    private String dstMessage1;
-    private String dstMessage2;
-    private String dstMessage3;
-    private String trainStatus;
+    private String btrainNo;
+    private String statnNm;
+    private String statnFNm;
+    private String statnTNm;
+    private String bstatnNm;
+    private String arvlMsg;
+    private String arvlStatus;
     private String updnLine;
     private String subwayLine;
     private String direction;
-    private String trainType;
+    private String btrainSttus;
+
     @Override
     public String toString() {
         return "SubwayDTO{" +
-                "currentStation='" + currentStation + '\'' +
-                ", statnId='" + statnId + '\'' +
-                ", prevId='" + prevStationName + '\'' +
-                ", nextId='" + nextStationName + '\'' +
-                ", dstStation='" + dstStation + '\'' +
-                ", trainId='" + trainId + '\'' +
-                ", transferStations=" + transferStations +
-                ", dstTime='" + dstTime + '\'' +
-                ", dstMessage1='" + dstMessage1 + '\'' +
-                ", dstMessage2='" + dstMessage2 + '\'' +
-                ", dstMessage3='" + dstMessage3 + '\'' +
-                ", trainStatus='" + trainStatus + '\'' +
+                ", trainId='" + btrainNo + '\'' +
+                ", statnNm='" + statnNm + '\'' +
+                ", statnFNm='" + statnFNm + '\'' +
+                ", statnTNm='" + statnTNm + '\'' +
+                ", trainLineNm='" + bstatnNm + '\'' +
+                ", arvlMsg='" + arvlMsg + '\'' +
+                ", arvlStatus='" + arvlStatus + '\'' +
                 ", updnLine='" + updnLine + '\'' +
                 ", subwayLine='" + subwayLine + '\'' +
                 ", direction='" + direction + '\'' +
-                ", trainType='" + trainType + '\'' +
+                ", btrainSttus='" + btrainSttus + '\'' +
                 '}';
     }
     public Subway toEntity() {
         return Subway.builder()
-                .statnId(this.statnId)
-                .prevStationName(this.prevStationName)
-                .nextStationName(this.nextStationName)
-                .dstStation(this.dstStation)
-                .trainId(this.trainId)
-                .transferStations(this.transferStations)
-                .dstTime(this.dstTime)
-                .dstMessage1(this.dstMessage1)
-                .dstMessage2(this.dstMessage2)
-                .dstMessage3(this.dstMessage3)
-                .trainStatus(TrainStatus.fromCode(this.trainStatus)) // Assuming TrainStatus is an enum
+                .btrainNo(this.btrainNo)
+                .statnNm(this.statnNm)
+                .statnFNm(this.statnFNm)
+                .statnTNm(this.statnTNm)
+                .bstatnNm(this.bstatnNm)
+                .arvlMsg(this.arvlMsg)
+                .arvlStatus(TrainStatus.fromCode(this.arvlStatus))
                 .updnLine(this.updnLine)
-                .subwayLine(this.subwayLine) // Assuming SubwayLine is an enum
-                .currentStation(this.currentStation)
+                .subwayLine(this.subwayLine)
                 .direction(this.direction)
-                .trainType(this.trainType)
+                .btrainSttus(this.btrainSttus)
                 .build();
     }
 }

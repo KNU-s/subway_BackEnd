@@ -2,7 +2,6 @@ package com.knu.subway.service;
 
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
-import com.knu.subway.entity.subwayEnum.TrainStatus;
 import com.knu.subway.repository.SubwayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +19,10 @@ public class SubwayService {
         return subway.getId();
     }
     public Subway update(Subway subway, SubwayDTO subwayDto){
-        subway.setStatnId(subwayDto.getStatnId());
-        subway.setNextStationName(subwayDto.getNextStationName());
-        subway.setPrevStationName(subwayDto.getPrevStationName());
-        subway.setDstTime(subwayDto.getDstTime());
-        subway.setDstMessage1(subwayDto.getDstMessage1());
-        subway.setDstMessage2(subwayDto.getDstMessage2());
-        subway.setTrainStatus(TrainStatus.fromCode(subwayDto.getTrainStatus()).getDescription());
+        subway.setStatnNm(subwayDto.getStatnNm());
+        subway.setStatnTNm(subwayDto.getStatnTNm());
+        subway.setStatnFNm(subwayDto.getStatnFNm());
+        subway.setArvlMsg(subwayDto.getArvlMsg());
         return subway;
     }
 
@@ -41,19 +37,19 @@ public class SubwayService {
 
     public void delete(Subway subway) {
         subwayRepository.delete(subway);
-        log.info("Delete Subway :{}", subway.getStatnId());
+        log.info("Delete Subway :{}", subway.getStatnNm());
     }
     public void deleteById(String id) {
         subwayRepository.deleteById(id);
         log.info("Delete Subway id :{}", id);
     }
 
-    public List<Subway> findByStatnId(String statnId){
-        return subwayRepository.findByStatnId(statnId);
+    public List<Subway> findByStatnNm(String statnNm){
+        return subwayRepository.findByStatnNm(statnNm);
     }
 
-    public List<Subway> findByTrainId(String trainId){
-        return subwayRepository.findByTrainId(trainId);
+    public List<Subway> findByBtrainNo(String btrainNo){
+        return subwayRepository.findByBtrainNo(btrainNo);
     }
 
     public List<Subway> findByStationLine(String stationLine) {

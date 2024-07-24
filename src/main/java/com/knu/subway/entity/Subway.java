@@ -7,56 +7,41 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 @Setter
 @Getter
 @Document(collection = "subway")
 public class Subway {
     @Id
     private String id;
-    private String trainId;
-    private String statnId;
-    private String currentStation;
-    //이전역 ID
-    private String prevStationName;
-    //다음역 ID
-    private String nextStationName;
-    //도착지방면
-    private String dstStation;
-    //환승 가능 역 ID ( ',' 기준으로 나눠야 함 )
-    private List<String> transferStations;
-    //열차 도착 예정 시간(단위: 초)
-    private String dstTime;
-    //도착 메시지( 3개가 있음 )
-    private String dstMessage1;
-    private String dstMessage2;
-    private String dstMessage3;
+    private String btrainNo;
+    private String statnNm;
+    //이전역
+    private String statnFNm;
+    //다음역
+    private String statnTNm;
+    private String bstatnNm;
+    private String arvlMsg;
     // (0:진입, 1:도착, 2:출발, 3:전역 출발, 4:전역 진입, 5:전역 도착, 99:운행중)
-    private String trainStatus;
+    private String arvlStatus;
     // (0 : 상행/내선, 1 : 하행/외선)
     private String updnLine;
     private String subwayLine;
     private String direction;
-    private String trainType;
+    private String btrainSttus;
     @Builder
-    public Subway(String id,String currentStation, String statnId, String prevStationName, String nextStationName, String dstStation, List<String> transferStations, String dstTime, String dstMessage1, String dstMessage2, String dstMessage3, TrainStatus trainStatus, String updnLine, String subwayLine,String trainId,String direction, String trainType) {
+    public Subway(String id, String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, TrainStatus arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus) {
         this.id = id;
-        this.statnId = statnId;
-        this.prevStationName = prevStationName;
-        this.nextStationName = nextStationName;
-        this.dstStation = dstStation;
-        this.transferStations = transferStations;
-        this.dstTime = dstTime;
-        this.dstMessage1 = dstMessage1;
-        this.dstMessage2 = dstMessage2;
-        this.dstMessage3 = dstMessage3;
-        this.trainStatus = trainStatus.getDescription();
+        this.statnNm = statnNm;
+        this.statnFNm = statnFNm;
+        this.statnTNm = statnTNm;
+        this.bstatnNm = bstatnNm;
+        this.arvlMsg = arvlMsg;
+        this.arvlStatus = arvlStatus.getDescription();
         this.updnLine = updnLine;
-        this.trainId = trainId;
+        this.btrainNo = btrainNo;
         this.subwayLine = subwayLine;
-        this.currentStation = currentStation;
         this.direction = direction;
-        this.trainType = trainType;
+        this.btrainSttus = btrainSttus;
     }
 
     public Subway() {
