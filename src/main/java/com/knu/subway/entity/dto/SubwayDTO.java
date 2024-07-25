@@ -19,6 +19,7 @@ public class SubwayDTO {
     private String subwayLine;
     private String direction;
     private String btrainSttus;
+    private boolean lstcarAt;
 
     @Override
     public String toString() {
@@ -34,6 +35,7 @@ public class SubwayDTO {
                 ", subwayLine='" + subwayLine + '\'' +
                 ", direction='" + direction + '\'' +
                 ", btrainSttus='" + btrainSttus + '\'' +
+                ", btrainSttus='" + lstcarAt + '\'' +
                 '}';
     }
     public Subway toEntity() {
@@ -49,6 +51,7 @@ public class SubwayDTO {
                 .subwayLine(this.subwayLine)
                 .direction(this.direction)
                 .btrainSttus(this.btrainSttus)
+                .lstcarAt(this.lstcarAt)
                 .build();
     }
 }

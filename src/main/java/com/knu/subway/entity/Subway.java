@@ -28,8 +28,9 @@ public class Subway {
     private String subwayLine;
     private String direction;
     private String btrainSttus;
+    private boolean lstcarAt;
     @Builder
-    public Subway(String id, String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, TrainStatus arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus) {
+    public Subway(String id, String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, TrainStatus arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt) {
         this.id = id;
         this.statnNm = statnNm;
         this.statnFNm = statnFNm;
@@ -42,6 +43,7 @@ public class Subway {
         this.subwayLine = subwayLine;
         this.direction = direction;
         this.btrainSttus = btrainSttus;
+        this.lstcarAt = lstcarAt;
     }
 
     public Subway() {
