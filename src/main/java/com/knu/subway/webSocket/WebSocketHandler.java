@@ -79,6 +79,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 session.sendMessage(new TextMessage(json));
                 log.info("Send Subway Message: {}", json);
             } else {
+                session.sendMessage(new TextMessage("해당 호선은 데이터가 없습니다. 다시 확인해주세요."));
                 log.warn("No valid station information found for message: {}", message);
             }
         } catch (Exception e) {
