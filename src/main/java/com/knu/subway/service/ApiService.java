@@ -107,7 +107,7 @@ public class ApiService {
 
                     subwayDTO.setBtrainNo((String) tempEle.get("btrainNo"));
                     subwayDTO.setBtrainSttus((String) tempEle.get("btrainSttus"));
-                    subwayDTO.setLstcarAt(Objects.equals((String)tempEle.get("lstcarAt"),"0"));
+                    subwayDTO.setLstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(),"1"));
                     subwayDTOList.add(subwayDTO);
                 }
             }
