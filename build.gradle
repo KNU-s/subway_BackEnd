@@ -37,6 +37,8 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	//Mongo DB
 	implementation ('org.springframework.boot:spring-boot-starter-data-mongodb')
+	//AOP
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 }
 
 tasks.named('test') {

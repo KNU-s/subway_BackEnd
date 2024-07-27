@@ -2,7 +2,6 @@ package com.knu.subway.webSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.knu.subway.entity.Subway;
-import com.knu.subway.helper.JsonConverter;
 import com.knu.subway.service.ApiService;
 import com.knu.subway.service.StationInfoService;
 import com.knu.subway.service.SubwayService;
@@ -28,30 +27,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ApiService apiService;
     private final StationInfoService stationInfoService;
     private final SubwayService subwayService;
-    private final JsonConverter jsonConverter;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
     //메세지를 수신했을 때 실행
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String receivedMessage = message.getPayload();
-        log.info("Received Message: {}", receivedMessage);
+        sessionStationMap.remove(session);
         synchronized (sessionStationMap) {
             sessionStationMap.put(session, receivedMessage);
+            sendSubwayData();
         }
     }
     //연결 됐을 때 실행
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info("WebSocket Connected");
-        log.info("Session ID: {}", session.getId());
         sessionMap.put(session.getId(), session);
         session.sendMessage(new TextMessage(session.getId()));
     }
     //연결이 종료 됐을 때 실행
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
-        log.info("WebSocket Disconnected");
-        log.info("Session ID: {}", session.getId());
         sessionMap.remove(session.getId());
         synchronized (sessionStationMap) {
             sessionStationMap.remove(session);
@@ -77,13 +72,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String json = objectMapper.writeValueAsString(subwayList);
                 session.sendMessage(new TextMessage(json));
-                log.info("Send Subway Message: {}", json);
             } else {
                 session.sendMessage(new TextMessage("해당 호선은 데이터가 없습니다. 다시 확인해주세요."));
-                log.warn("No valid station information found for message: {}", message);
             }
         } catch (Exception e) {
-            log.error("Error while processing station data for message: {}", message, e);
+            e.printStackTrace();
         }
     }
 
