@@ -32,7 +32,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         String receivedMessage = message.getPayload();
-        sessionStationMap.remove(session);
+        //중복 호선 호출 방지
+        if(sessionStationMap.containsKey(session)){
+            sessionStationMap.remove(session);
+        }
         synchronized (sessionStationMap) {
             sessionStationMap.put(session, receivedMessage);
             sendSubwayData();
