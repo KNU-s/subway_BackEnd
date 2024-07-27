@@ -67,7 +67,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     public void sendData(WebSocketSession session, String message) {
         try {
-            List<Subway> subwayList = subwayService.findByStationLine(message);
+            List<Subway> subwayList = subwayService.findBySubwayLine(message);
             if (!subwayList.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 String json = objectMapper.writeValueAsString(subwayList);

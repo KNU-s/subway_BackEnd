@@ -53,9 +53,9 @@ public class SubwayService {
         return subwayRepository.findByBtrainNo(btrainNo);
     }
 
-    @Cacheable(cacheNames = "Subway", key = "#stationLine")
-    public List<Subway> findByStationLine(String stationLine) {
-        return subwayRepository.findBySubwayLine(stationLine);
+    @Cacheable(cacheNames = "Subway", key = "#subwayLine")
+    public List<Subway> findBySubwayLine(String subwayLine) {
+        return subwayRepository.findBySubwayLine(subwayLine);
     }
 
     public void saveAll(List<Subway> subways){
