@@ -17,6 +17,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
+/**
+ * 서울 공공 API를 호출하는 서비스입니다.
+ * SubwayDataCollector 에서 호출해서 사용합니다.
+ * 데이터를 요청하고 받아와서 파싱한 뒤 SubwayDTO 형식에 List를 반환합니다.
+ */
 @RequiredArgsConstructor
 @Service
 public class ApiService {

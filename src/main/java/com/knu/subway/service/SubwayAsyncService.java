@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Subway 비동기를 처리하기 위한 클래스입니다.
+ *
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
