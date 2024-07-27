@@ -38,11 +38,9 @@ public class SubwayService {
 
     public void delete(Subway subway) {
         subwayRepository.delete(subway);
-        log.info("Delete Subway :{}", subway.getStatnNm());
     }
     public void deleteById(String id) {
         subwayRepository.deleteById(id);
-        log.info("Delete Subway id :{}", id);
     }
 
     public List<Subway> findByStatnNm(String statnNm){
@@ -53,7 +51,6 @@ public class SubwayService {
         return subwayRepository.findByBtrainNo(btrainNo);
     }
 
-    @Cacheable(cacheNames = "Subway", key = "#subwayLine")
     public List<Subway> findBySubwayLine(String subwayLine) {
         return subwayRepository.findBySubwayLine(subwayLine);
     }
