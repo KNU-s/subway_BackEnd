@@ -46,7 +46,7 @@ public class SubwayDataCollector {
         }
     }
 
-    @Scheduled(fixedRate = 60000)  // 30분마다 쿠키 초기화
+    @Scheduled(fixedRate = 1800000)  // 30분마다 쿠키 초기화
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie.clear();
