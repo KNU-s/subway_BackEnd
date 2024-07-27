@@ -5,6 +5,7 @@ import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.repository.SubwayRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class SubwayService {
         return subwayRepository.findByBtrainNo(btrainNo);
     }
 
+    @Cacheable(cacheNames = "Subway", key = "#stationLine")
     public List<Subway> findByStationLine(String stationLine) {
         return subwayRepository.findBySubwayLine(stationLine);
     }
@@ -60,8 +62,13 @@ public class SubwayService {
         subwayRepository.saveAll(subways);
     }
 
-    public void deleteAll(){
-        subwayRepository.deleteAll();;
+    public void deleteAll(List<Subway> subways){
+        subwayRepository.deleteAll(subways);
     }
+
+    public void deleteAll(){
+        subwayRepository.deleteAll();
+    }
+
 
 }

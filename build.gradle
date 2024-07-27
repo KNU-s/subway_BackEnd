@@ -39,6 +39,8 @@ dependencies {
 	implementation ('org.springframework.boot:spring-boot-starter-data-mongodb')
 	//AOP
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	//Cache
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 }
 
 tasks.named('test') {
