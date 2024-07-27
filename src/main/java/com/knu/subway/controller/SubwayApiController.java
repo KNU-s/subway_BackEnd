@@ -22,7 +22,7 @@ public class SubwayApiController {
     }
     @GetMapping("/stationLine/{stationLine}")
     public List<Subway> getSubwayByStationLine(@PathVariable("stationLine") String stationLine){
-        return subwayService.findByStationLine(stationLine);
+        return subwayService.findBySubwayLine(stationLine);
     }
 
     @GetMapping
