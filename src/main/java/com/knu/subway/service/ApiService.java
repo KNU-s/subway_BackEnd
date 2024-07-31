@@ -8,8 +8,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,11 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
-/**
- * 서울 공공 API를 호출하는 서비스입니다.
- * SubwayDataCollector 에서 호출해서 사용합니다.
- * 데이터를 요청하고 받아와서 파싱한 뒤 SubwayDTO 형식에 List를 반환합니다.
- */
 @RequiredArgsConstructor
 @Service
 public class ApiService {
@@ -30,48 +23,58 @@ public class ApiService {
     private final StationInfoService stationInfoService;
     private HashMap<String, String[]> stationNameHashMap;
     private List<StationInfo> infoList;
-    private static final Logger log = LoggerFactory.getLogger(ApiService.class);
 
     @Value("${subway.api.key}")
     private String apiKey;
 
     @Value("${subway.api.url}")
     private String baseUrl;
+
     @PostConstruct
     private void init() {
         String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/5";
         this.webClient = WebClient.create(fullUrl);
         this.infoList = stationInfoService.findAll();
         this.stationNameHashMap = new HashMap<>();
-        for(StationInfo data : infoList){
-            stationNameHashMap.put(data.getStationId(), new String[]{data.getStationName(),data.getStationLine()});
+        for (StationInfo data : infoList) {
+            stationNameHashMap.put(data.getStationId(), new String[]{data.getStationName(), data.getStationLine()});
         }
-
     }
 
     public List<SubwayDTO> getSubwayArrivals(String stationName) {
         Mono<String> response = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .retry(2)
+                .onErrorResume(throwable -> {
+                    throw new RuntimeException("Error occurred while fetching subway arrivals: " + throwable.getMessage());
+                });
 
         String responseBody = response.block();
-
         if (responseBody == null || responseBody.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return parseResponse(responseBody);
+        return parseResponse(responseBody, stationName);
     }
 
-    private List<SubwayDTO> parseResponse(String responseBody) {
+    private List<SubwayDTO> parseResponse(String responseBody, String station) {
         List<SubwayDTO> subwayDTOList = new ArrayList<>();
 
         try {
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(responseBody);
-            JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
 
+            // Check if there is an error in the response
+            if (jsonObject.containsKey("status") && (Long) jsonObject.get("status") != 200) {
+                String status = jsonObject.get("status").toString();
+                String code = (String) jsonObject.get("code");
+                String message = (String) jsonObject.get("message");
+                throw new RuntimeException("Error in response: status=" + status + ", code=" + code + ", message=" + message + ", station=" + station);
+            }
+
+            JSONArray element = (JSONArray) jsonObject.get("realtimeArrivalList");
             if (element != null && !element.isEmpty()) {
                 for (Object o : element) {
                     JSONObject tempEle = (JSONObject) o;
@@ -87,13 +90,13 @@ public class ApiService {
                     String[] statnTidInfo = stationNameHashMap.get(statnTid);
 
                     if (stationIdInfo == null) {
-                        log.warn("No information found for statnId: {}", statnId);
+                        throw new RuntimeException("No information found for statnId: " + statnId);
                     }
                     if (statnFidInfo == null) {
-                        log.warn("No information found for statnFid: {}", statnFid);
+                        throw new RuntimeException("No information found for statnFid: " + statnFid);
                     }
                     if (statnTidInfo == null) {
-                        log.warn("No information found for statnTid: {}", statnTid);
+                        throw new RuntimeException("No information found for statnTid: " + statnTid);
                     }
 
                     // Set defaults if stationNameHashMap.get returns null
@@ -112,15 +115,14 @@ public class ApiService {
 
                     subwayDTO.setBtrainNo((String) tempEle.get("btrainNo"));
                     subwayDTO.setBtrainSttus((String) tempEle.get("btrainSttus"));
-                    subwayDTO.setLstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(),"1"));
+                    subwayDTO.setLstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(), "1"));
                     subwayDTOList.add(subwayDTO);
                 }
             }
         } catch (ParseException e) {
-            log.error("Error while parsing JSON response: {}", e.getMessage(), e);
+            throw new RuntimeException("Error while parsing JSON response: " + e.getMessage(), e);
         }
 
         return subwayDTOList;
     }
-
 }
