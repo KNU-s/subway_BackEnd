@@ -2,6 +2,7 @@ package com.knu.subway.entity.dto;
 
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,21 @@ public class SubwayDTO {
     private String direction;
     private String btrainSttus;
     private boolean lstcarAt;
+    @Builder
+    public SubwayDTO(String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, String arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt) {
+        this.statnNm = statnNm;
+        this.statnFNm = statnFNm;
+        this.statnTNm = statnTNm;
+        this.bstatnNm = bstatnNm;
+        this.arvlMsg = arvlMsg;
+        this.arvlStatus = arvlStatus;
+        this.updnLine = updnLine;
+        this.btrainNo = btrainNo;
+        this.subwayLine = subwayLine;
+        this.direction = direction;
+        this.btrainSttus = btrainSttus;
+        this.lstcarAt = lstcarAt;
+    }
 
     @Override
     public String toString() {
@@ -53,5 +69,9 @@ public class SubwayDTO {
                 .btrainSttus(this.btrainSttus)
                 .lstcarAt(this.lstcarAt)
                 .build();
+    }
+
+    public SubwayDTO(){
+
     }
 }

@@ -1,5 +1,6 @@
 package com.knu.subway.entity;
 
+import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,5 +49,23 @@ public class Subway {
 
     public Subway() {
 
+    }
+
+    public SubwayDTO toDTO() {
+        SubwayDTO dto = SubwayDTO.builder()
+                .btrainNo(this.btrainNo)
+                .statnNm(this.statnNm)
+                .statnFNm(this.statnFNm)
+                .statnTNm(this.statnTNm)
+                .bstatnNm(this.bstatnNm)
+                .arvlMsg(this.arvlMsg)
+                .arvlStatus(this.arvlStatus)
+                .updnLine(this.updnLine)
+                .subwayLine(this.subwayLine)
+                .direction(this.direction)
+                .btrainSttus(this.btrainSttus)
+                .lstcarAt(this.lstcarAt)
+                .build();
+        return dto;
     }
 }
