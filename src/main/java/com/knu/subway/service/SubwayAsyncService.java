@@ -54,12 +54,15 @@ public class SubwayAsyncService {
                     subwayCookie.add(existingTrain.getBtrainNo());
                 } else {
                     Subway updatedSubway = subwayService.update(existingTrains.get(0), data);
+                    boolean exist = false;
                     for(Subway subwayData : subwaysToSave){
                         if(Objects.equals(subwayData.getBtrainNo(),updatedSubway.getBtrainNo())){
-                            break;
+                            exist = true;
                         }
                     }
-                    subwaysToSave.add(updatedSubway);
+                    if(!exist) {
+                        subwaysToSave.add(updatedSubway);
+                    }
                 }
             }
         }
