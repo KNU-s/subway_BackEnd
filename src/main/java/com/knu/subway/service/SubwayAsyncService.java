@@ -5,6 +5,8 @@ import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -52,6 +54,11 @@ public class SubwayAsyncService {
                     subwayCookie.add(existingTrain.getBtrainNo());
                 } else {
                     Subway updatedSubway = subwayService.update(existingTrains.get(0), data);
+                    for(Subway subwayData : subwaysToSave){
+                        if(Objects.equals(subwayData.getBtrainNo(),updatedSubway.getBtrainNo())){
+                            break;
+                        }
+                    }
                     subwaysToSave.add(updatedSubway);
                 }
             }
