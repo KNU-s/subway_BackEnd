@@ -91,7 +91,7 @@ public class ApiService {
                     String[] statnTidInfo = stationNameHashMap.get(statnTid);
 
                     if (stationIdInfo == null) {
-                        throw new RuntimeException("No information found for statnId: " + statnId);
+                        break;
                     }
 //                    if (statnFidInfo == null) {
 //                        throw new RuntimeException("No information found for statnFid: " + statnFid);
