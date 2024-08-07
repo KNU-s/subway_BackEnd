@@ -33,7 +33,7 @@ public class ApiService {
 
     @PostConstruct
     private void init() {
-        String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/5";
+        String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/10";
         this.webClient = WebClient.create(fullUrl);
         this.infoList = stationInfoService.findAll();
         this.stationNameHashMap = new HashMap<>();
