@@ -134,12 +134,6 @@ public class ApiService {
         } catch (ParseException e) {
             throw new RuntimeException("Error while parsing JSON response: " + e.getMessage(), e);
         }
-        System.out.println(station);
-        System.out.println("=======");
-        for(SubwayDTO data : subwayDTOList){
-            System.out.println(data.getStatnFNm());
-        }
-        System.out.println("========");
         return subwayDTOList;
     }
 }
