@@ -14,7 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -93,40 +92,14 @@ public class ApiService {
                     if (stationIdInfo == null) {
                         break;
                     }
-//                    if (statnFidInfo == null) {
-//                        throw new RuntimeException("No information found for statnFid: " + statnFid);
-//                    }
-//                    if (statnTidInfo == null) {
-//                        throw new RuntimeException("No information found for statnTid: " + statnTid);
-//                    }
 
                     // Get the arrival message
                     String arvlMsg = (String) tempEle.get("arvlMsg2");
 
-                    // Regular expression pattern to check for any digits in arvlMsg
-                    Pattern digitPattern = Pattern.compile("\\d");
-
-                    // If arvlMsg contains any digits, skip adding this subwayDTO to the list
-                    if (arvlMsg != null && digitPattern.matcher(arvlMsg).find()) {
-                        if(arvlMsg.contains("[")){
-                            String arvl = arvlMsg.substring(1,arvlMsg.lastIndexOf("]"));
-                            if(((String) tempEle.get("updnLine")).contains("상")){
-                                if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)))){
-                                    stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)));
-                                }
-                            } else if (((String) tempEle.get("updnLine")).contains("하")){
-                                if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) - Integer.valueOf(arvl)))){
-                                    stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) - Integer.valueOf(arvl)));
-                                }
-                            }
-
-                        }
-
-                        arvlMsg = (String) tempEle.get("arvlMsg3");
-                    }
-
                     // Set defaults if stationNameHashMap.get returns null
-                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
+                    subwayDTO.setStatnNm((String) tempEle.get("arvlMsg3"));
+
+//                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
                     subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
                     subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
 
