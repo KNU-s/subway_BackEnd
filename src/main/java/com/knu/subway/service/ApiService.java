@@ -59,7 +59,7 @@ public class ApiService {
 
         return parseResponse(responseBody, stationName);
     }
-
+    //todo 리팩토링 필요 !!
     private List<SubwayDTO> parseResponse(String responseBody, String station) {
         List<SubwayDTO> subwayDTOList = new ArrayList<>();
 
@@ -110,9 +110,16 @@ public class ApiService {
                     if (arvlMsg != null && digitPattern.matcher(arvlMsg).find()) {
                         if(arvlMsg.contains("[")){
                             String arvl = arvlMsg.substring(1,arvlMsg.lastIndexOf("]"));
-                            if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)))){
-                                stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)));
+                            if(((String) tempEle.get("updnLine")).contains("상")){
+                                if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)))){
+                                    stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)));
+                                }
+                            } else if (((String) tempEle.get("updnLine")).contains("하")){
+                                if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) - Integer.valueOf(arvl)))){
+                                    stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) - Integer.valueOf(arvl)));
+                                }
                             }
+
                         }
 
                         arvlMsg = (String) tempEle.get("arvlMsg3");
