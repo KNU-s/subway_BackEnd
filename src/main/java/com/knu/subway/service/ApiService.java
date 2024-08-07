@@ -93,12 +93,12 @@ public class ApiService {
                     if (stationIdInfo == null) {
                         throw new RuntimeException("No information found for statnId: " + statnId);
                     }
-                    if (statnFidInfo == null) {
-                        throw new RuntimeException("No information found for statnFid: " + statnFid);
-                    }
-                    if (statnTidInfo == null) {
-                        throw new RuntimeException("No information found for statnTid: " + statnTid);
-                    }
+//                    if (statnFidInfo == null) {
+//                        throw new RuntimeException("No information found for statnFid: " + statnFid);
+//                    }
+//                    if (statnTidInfo == null) {
+//                        throw new RuntimeException("No information found for statnTid: " + statnTid);
+//                    }
 
                     // Get the arrival message
                     String arvlMsg = (String) tempEle.get("arvlMsg2");
@@ -108,11 +108,11 @@ public class ApiService {
 
                     // If arvlMsg contains any digits, skip adding this subwayDTO to the list
                     if (arvlMsg != null && digitPattern.matcher(arvlMsg).find()) {
-                        break;
+                        arvlMsg = (String) tempEle.get("arvlMsg3");
                     }
 
                     // Set defaults if stationNameHashMap.get returns null
-                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
+//                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
                     subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
                     subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
 
@@ -134,7 +134,12 @@ public class ApiService {
         } catch (ParseException e) {
             throw new RuntimeException("Error while parsing JSON response: " + e.getMessage(), e);
         }
-
+        System.out.println(station);
+        System.out.println("=======");
+        for(SubwayDTO data : subwayDTOList){
+            System.out.println(data.getStatnFNm());
+        }
+        System.out.println("========");
         return subwayDTOList;
     }
 }
