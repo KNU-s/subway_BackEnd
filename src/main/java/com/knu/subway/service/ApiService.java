@@ -108,6 +108,13 @@ public class ApiService {
 
                     // If arvlMsg contains any digits, skip adding this subwayDTO to the list
                     if (arvlMsg != null && digitPattern.matcher(arvlMsg).find()) {
+                        if(arvlMsg.contains("[")){
+                            String arvl = arvlMsg.substring(1,arvlMsg.lastIndexOf("]"));
+                            if(stationNameHashMap.containsKey(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)))){
+                                stationIdInfo = stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) + Integer.valueOf(arvl)));
+                            }
+                        }
+
                         arvlMsg = (String) tempEle.get("arvlMsg3");
                     }
 
