@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -99,6 +100,17 @@ public class ApiService {
                         throw new RuntimeException("No information found for statnTid: " + statnTid);
                     }
 
+                    // Get the arrival message
+                    String arvlMsg = (String) tempEle.get("arvlMsg2");
+
+                    // Regular expression pattern to check for any digits in arvlMsg
+                    Pattern digitPattern = Pattern.compile("\\d");
+
+                    // If arvlMsg contains any digits, skip adding this subwayDTO to the list
+                    if (arvlMsg != null && digitPattern.matcher(arvlMsg).find()) {
+                        break;
+                    }
+
                     // Set defaults if stationNameHashMap.get returns null
                     subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
                     subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
@@ -106,7 +118,7 @@ public class ApiService {
 
                     subwayDTO.setBstatnNm((String) tempEle.get("bstatnNm"));
 
-                    subwayDTO.setArvlMsg((String) tempEle.get("arvlMsg2"));
+                    subwayDTO.setArvlMsg(arvlMsg);
                     subwayDTO.setArvlStatus((String) tempEle.get("arvlCd"));
                     subwayDTO.setUpdnLine((String) tempEle.get("updnLine"));
 
