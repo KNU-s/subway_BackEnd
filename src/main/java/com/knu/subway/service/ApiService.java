@@ -112,7 +112,7 @@ public class ApiService {
                     }
 
                     // Set defaults if stationNameHashMap.get returns null
-//                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
+                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
                     subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
                     subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
 
