@@ -21,7 +21,7 @@ public class ApiService {
 
     private WebClient webClient;
     private final StationInfoService stationInfoService;
-    private HashMap<String, String[]> stationNameHashMap;
+    private HashMap<String, Object[]> stationNameHashMap;
     private List<StationInfo> infoList;
 
     @Value("${subway.api.key}")
@@ -35,9 +35,22 @@ public class ApiService {
         String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/10";
         this.webClient = WebClient.create(fullUrl);
         this.infoList = stationInfoService.findAll();
+
         this.stationNameHashMap = new HashMap<>();
         for (StationInfo data : infoList) {
-            stationNameHashMap.put(data.getStationId(), new String[]{data.getStationName(), data.getStationLine()});
+            // 기존 StationId가 있는지 확인
+            Object[] stationData = stationNameHashMap.getOrDefault(data.getStationId(),
+                    new Object[]{data.getStationName(), data.getStationLine(), 0});
+
+            // 카운트를 증가
+            int count = (int) stationData[2] + 1;
+            stationData[2] = count;
+            // 기존 StationId로 정보 갱신
+            stationNameHashMap.put(data.getStationId(), stationData);
+            // 10,000 증가된 StationId 생성
+            String newStationId = String.valueOf(Integer.parseInt(data.getStationId()) + 10000);
+            // 새 StationId에 동일한 정보와 카운트 저장
+            stationNameHashMap.put(newStationId, new Object[]{data.getStationName(), data.getStationLine(), count});
         }
     }
 
@@ -85,9 +98,9 @@ public class ApiService {
                     String statnFid = (String) tempEle.get("statnFid");
                     String statnTid = (String) tempEle.get("statnTid");
 
-                    String[] stationIdInfo = stationNameHashMap.get(statnId);
-                    String[] statnFidInfo = stationNameHashMap.get(statnFid);
-                    String[] statnTidInfo = stationNameHashMap.get(statnTid);
+                    Object[] stationIdInfo = stationNameHashMap.get(statnId);
+                    Object[] statnFidInfo = stationNameHashMap.get(statnFid);
+                    Object[] statnTidInfo = stationNameHashMap.get(statnTid);
 
                     if (stationIdInfo == null) {
                         break;
@@ -100,21 +113,38 @@ public class ApiService {
                     subwayDTO.setStatnNm((String) tempEle.get("arvlMsg3"));
 
 //                    subwayDTO.setStatnNm(stationIdInfo != null ? stationIdInfo[0] : "Unknown");
-                    subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0] : "Unknown");
-                    subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0] : "Unknown");
+                    subwayDTO.setStatnFNm(statnFidInfo != null ? statnFidInfo[0].toString() : "Unknown");
+                    subwayDTO.setStatnTNm(statnTidInfo != null ? statnTidInfo[0].toString() : "Unknown");
 
                     subwayDTO.setBstatnNm((String) tempEle.get("bstatnNm"));
 
                     subwayDTO.setArvlMsg(arvlMsg);
                     subwayDTO.setArvlStatus((String) tempEle.get("arvlCd"));
                     subwayDTO.setUpdnLine((String) tempEle.get("updnLine"));
-
                     // Set subway line, with default if stationNameHashMap.get returns null
-                    subwayDTO.setSubwayLine(stationIdInfo != null ? stationIdInfo[1] : "Unknown");
+                    subwayDTO.setSubwayLine(stationIdInfo != null ? stationIdInfo[1].toString() : "Unknown");
 
                     subwayDTO.setBtrainNo((String) tempEle.get("btrainNo"));
                     subwayDTO.setBtrainSttus((String) tempEle.get("btrainSttus"));
                     subwayDTO.setLstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(), "1"));
+                    if( (int)stationIdInfo[2] > 1) {
+                        SubwayDTO clone = SubwayDTO.builder()
+                                .bstatnNm(subwayDTO.getBstatnNm())
+                                .btrainNo(subwayDTO.getBtrainNo())
+                                .updnLine(subwayDTO.getUpdnLine())
+                                .arvlStatus(subwayDTO.getArvlStatus())
+                                .arvlMsg(subwayDTO.getArvlMsg())
+                                .btrainSttus(subwayDTO.getBtrainSttus())
+                                .lstcarAt(subwayDTO.isLstcarAt())
+                                .statnFNm(subwayDTO.getStatnFNm())
+                                .statnTNm(subwayDTO.getStatnTNm())
+                                .statnNm(subwayDTO.getStatnNm())
+                                .build();
+                        if(stationNameHashMap.containsKey(String.valueOf(Integer.parseInt(statnId) + 10000))) {
+                            clone.setSubwayLine((String) stationNameHashMap.get(String.valueOf(Integer.valueOf(statnId) + 10000))[1]);
+                            subwayDTOList.add(clone);
+                        }
+                    }
                     subwayDTOList.add(subwayDTO);
                 }
             }
