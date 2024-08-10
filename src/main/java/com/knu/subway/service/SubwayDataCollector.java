@@ -3,6 +3,8 @@ package com.knu.subway.service;
 import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.Subway;
 import jakarta.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,10 +42,15 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(fixedRate = 5000)  // 5초마다 데이터 수집
+    @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
-        for(String data : stationList){
-            subwayAsyncService.collectDataByLineAsync(data,stationInfoList,subwayCookie);
+        LocalTime now = LocalTime.now();
+
+        // Time range check: from 5 AM to 2 AM
+        if (now.isAfter(LocalTime.of(5, 0)) || now.isBefore(LocalTime.of(2, 0))) {
+            for (String data : stationList) {
+                subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
+            }
         }
     }
 
@@ -62,5 +69,9 @@ public class SubwayDataCollector {
                 subwayCookie.add(subway.getBtrainNo());
             }
         }
+    }
+    @Scheduled(cron = "0 0 5 * * *")
+    public void resetSubway(){
+        subwayService.deleteAll();
     }
 }
