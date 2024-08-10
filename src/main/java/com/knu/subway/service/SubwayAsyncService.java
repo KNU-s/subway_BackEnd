@@ -3,7 +3,6 @@ package com.knu.subway.service;
 import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Subway 비동기를 처리하기 위한 클래스입니다.
- *
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -28,57 +26,35 @@ public class SubwayAsyncService {
     public void collectDataByLineAsync(String line, List<StationInfo> stationInfoList, List<String> subwayCookie) {
         stationInfoList.stream()
                 .filter(station -> station.getStationLine().equals(line))
-                .forEach(station -> {
-                    List<SubwayDTO> subwayArrivals = apiService.getSubwayArrivals(station.getStationName());
-                    saveSubwayInfo(subwayArrivals, subwayCookie);
-                });
+                .forEach(station -> processStation(station, subwayCookie));
+    }
+
+    private void processStation(StationInfo station, List<String> subwayCookie) {
+        List<SubwayDTO> subwayArrivals = apiService.getSubwayArrivals(station.getStationName());
+        saveSubwayInfo(subwayArrivals, subwayCookie);
     }
 
     private void saveSubwayInfo(List<SubwayDTO> subwayDTOList, List<String> subwayCookie) {
-        List<Subway> subwaysToSave = new ArrayList<>();
-        List<Subway> subwaysToDelete = new ArrayList<>();
-        for (SubwayDTO subwayDTO : subwayDTOList) {
+        subwayDTOList.forEach(subwayDTO -> {
             Subway subway = subwayDTO.toEntity();
-            processSubway(subway, subwayCookie, subwaysToSave, subwaysToDelete);
-        }
-        subwayService.deleteAll(subwaysToDelete);
-        subwayService.saveAll(subwaysToSave);
+            List<Subway> existingSubways = subwayService.findByBtrainNoAndSubwayLine(subwayDTO.getBtrainNo(), subwayDTO.getSubwayLine());
+
+            if (!existingSubways.isEmpty()) {
+                Subway existingSubway = existingSubways.get(0);
+                if (shouldDeleteExistingTrain(existingSubway)) {
+                    subwayService.delete(existingSubway);
+                    subwayCookie.add(existingSubway.getBtrainNo());
+                } else {
+                    subwayService.update(existingSubway, subwayDTO);
+                }
+            } else if (!subwayCookie.contains(subway.getBtrainNo())) {
+                subwayService.save(subway);
+            }
+        });
     }
 
-    private void processSubway(Subway subway, List<String> subwayCookie, List<Subway> subwaysToSave, List<Subway> subwaysToDelete) {
-        List<Subway> existingTrains = subwayService.findByBtrainNo(subway.getBtrainNo());
-        if (existingTrains.isEmpty()) {
-            handleNewTrain(subway, subwayCookie, subwaysToSave);
-        } else {
-            handleExistingTrain(subway, existingTrains, subwayCookie, subwaysToSave, subwaysToDelete);
-        }
-    }
-
-    private void handleNewTrain(Subway subway, List<String> subwayCookie, List<Subway> subwaysToSave) {
-        if (!subwayCookie.contains(subway.getBtrainNo())) {
-            subwaysToSave.add(subway);
-        }
-    }
-
-    private void handleExistingTrain(Subway subway, List<Subway> existingTrains, List<String> subwayCookie, List<Subway> subwaysToSave, List<Subway> subwaysToDelete) {
-        Subway existingTrain = existingTrains.get(0);
-        if (shouldDeleteExistingTrain(subway, existingTrain)) {
-            subwaysToDelete.add(existingTrain);
-            subwayCookie.add(existingTrain.getBtrainNo());
-        } else {
-            updateOrAddSubway(subway, existingTrain, subwaysToSave);
-        }
-    }
-
-    private void updateOrAddSubway(Subway subway, Subway existingTrain, List<Subway> subwaysToSave) {
-        Subway updatedSubway = subwayService.update(existingTrain, subway.toDTO());
-        if (subwaysToSave.stream().noneMatch(s -> Objects.equals(s.getBtrainNo(), updatedSubway.getBtrainNo()))) {
-            subwaysToSave.add(updatedSubway);
-        }
-    }
-
-    private boolean shouldDeleteExistingTrain(Subway subway, Subway existingTrain) {
+    public boolean shouldDeleteExistingTrain(Subway subway) {
         return subway.getBstatnNm() != null && subway.getStatnNm() != null && subway.getArvlStatus() != null &&
-                subway.getBstatnNm().contains(subway.getStatnNm()) && "도착".equals(subway.getArvlStatus());
+                Objects.equals(subway.getBstatnNm(), subway.getStatnNm());
     }
 }
