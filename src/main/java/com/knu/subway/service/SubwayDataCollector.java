@@ -1,6 +1,7 @@
 package com.knu.subway.service;
 
 import com.knu.subway.entity.StationInfo;
+import com.knu.subway.entity.Subway;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class SubwayDataCollector {
         this.stationList = stationInfoList.stream()
                 .map(StationInfo::getStationLine)
                 .collect(Collectors.toSet());
-
+        subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
     @Scheduled(fixedRate = 5000)  // 5초마다 데이터 수집
@@ -46,14 +47,19 @@ public class SubwayDataCollector {
         }
     }
 
-    @Scheduled(fixedRate = 1800000)  // 30분마다 쿠키 초기화
+    @Scheduled(fixedRate = 600000)  // 10분마다 쿠키 초기화
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie.clear();
     }
 
-    @Scheduled(fixedRate = 10800000) // 3 hours in milliseconds
-    public void deleteAllSubways() {
-        subwayService.deleteAll();
+    @Scheduled(fixedRate = 30000)
+    public void arrivalSubway() {
+        List<Subway> subways = subwayService.findAll();
+        for(Subway subway : subways ){
+            if(subwayAsyncService.shouldDeleteExistingTrain(subway)){
+                subwayService.delete(subway);
+            }
+        }
     }
 }

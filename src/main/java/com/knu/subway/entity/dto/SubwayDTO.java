@@ -21,7 +21,7 @@ public class SubwayDTO {
     private String direction;
     private String btrainSttus;
     private boolean lstcarAt;
-    @Builder
+    @Builder(toBuilder = true)
     public SubwayDTO(String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, String arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt) {
         this.statnNm = statnNm;
         this.statnFNm = statnFNm;
