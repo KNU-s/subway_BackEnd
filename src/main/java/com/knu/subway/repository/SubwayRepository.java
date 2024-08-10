@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface SubwayRepository extends MongoRepository<Subway, String> {
     List<Subway> findByStatnNm(String statnNm);
-    List<Subway> findByBtrainNo(String BtrainNo);
+    List<Subway> findByBtrainNo(String btrainNo);
     List<Subway> findBySubwayLine(String subwayLine);
+    List<Subway> findByBtrainNoAndSubwayLine(String btrainNo, String subwayLine);
 }

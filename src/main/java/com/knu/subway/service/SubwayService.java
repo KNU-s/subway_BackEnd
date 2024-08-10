@@ -24,6 +24,7 @@ public class SubwayService {
         subway.setStatnTNm(subwayDto.getStatnTNm());
         subway.setStatnFNm(subwayDto.getStatnFNm());
         subway.setArvlMsg(subwayDto.getArvlMsg());
+        subwayRepository.save(subway);
         return subway;
     }
 
@@ -65,6 +66,10 @@ public class SubwayService {
 
     public void deleteAll(){
         subwayRepository.deleteAll();
+    }
+
+    public List<Subway> findByBtrainNoAndSubwayLine(String btrainNo, String subwayLine){
+        return subwayRepository.findByBtrainNoAndSubwayLine(btrainNo,subwayLine);
     }
 
 
