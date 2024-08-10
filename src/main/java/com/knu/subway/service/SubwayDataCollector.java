@@ -59,6 +59,7 @@ public class SubwayDataCollector {
         for(Subway subway : subways ){
             if(subwayAsyncService.shouldDeleteExistingTrain(subway)){
                 subwayService.delete(subway);
+                subwayCookie.add(subway.getBtrainNo());
             }
         }
     }
