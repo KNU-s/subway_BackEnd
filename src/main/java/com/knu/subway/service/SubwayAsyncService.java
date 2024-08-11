@@ -55,6 +55,6 @@ public class SubwayAsyncService {
 
     public boolean shouldDeleteExistingTrain(Subway subway) {
         return subway.getBstatnNm() != null && subway.getStatnNm() != null && subway.getArvlStatus() != null &&
-                Objects.equals(subway.getBstatnNm(), subway.getStatnNm());
+                Objects.equals(subway.getBstatnNm(), subway.getStatnNm()) && subway.getArvlStatus().equals("도착");
     }
 }
