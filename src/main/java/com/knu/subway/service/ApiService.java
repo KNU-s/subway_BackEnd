@@ -3,6 +3,7 @@ package com.knu.subway.service;
 import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.dto.SubwayDTO;
 import jakarta.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -101,6 +102,10 @@ public class ApiService {
         if (stationIdInfo == null) {
             return;
         }
+        String arvlMsg2 = (String) tempEle.get("arvlMsg2");
+        if (arvlMsg2.matches(".*\\d.*")) {
+            return;
+        }
 
         SubwayDTO subwayDTO = SubwayDTO.builder()
                 .statnNm(cleanStationName((String) tempEle.get("arvlMsg3")))
@@ -114,6 +119,8 @@ public class ApiService {
                 .btrainNo((String) tempEle.get("btrainNo"))
                 .btrainSttus((String) tempEle.get("btrainSttus"))
                 .lstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(), "1"))
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
                 .build();
 
         subwayDTOList.add(subwayDTO);
