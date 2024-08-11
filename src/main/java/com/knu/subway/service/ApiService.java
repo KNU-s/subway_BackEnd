@@ -119,8 +119,8 @@ public class ApiService {
                 .btrainNo((String) tempEle.get("btrainNo"))
                 .btrainSttus((String) tempEle.get("btrainSttus"))
                 .lstcarAt(Objects.equals(tempEle.get("lstcarAt").toString(), "1"))
-                .created(LocalDateTime.now())
-                .updated(LocalDateTime.now())
+                .created(LocalDateTime.now().plusHours(9))
+                .updated(LocalDateTime.now().plusHours(9))
                 .build();
 
         subwayDTOList.add(subwayDTO);

@@ -70,6 +70,8 @@ public class Subway {
                 .direction(this.direction)
                 .btrainSttus(this.btrainSttus)
                 .lstcarAt(this.lstcarAt)
+                .updated(this.updated)
+                .created(this.created)
                 .build();
         return dto;
     }

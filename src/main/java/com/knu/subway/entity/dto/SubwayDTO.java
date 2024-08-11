@@ -73,6 +73,7 @@ public class SubwayDTO {
                 .direction(this.direction)
                 .btrainSttus(this.btrainSttus)
                 .lstcarAt(this.lstcarAt)
+                .created(this.created)
                 .updated(this.updated)
                 .build();
     }

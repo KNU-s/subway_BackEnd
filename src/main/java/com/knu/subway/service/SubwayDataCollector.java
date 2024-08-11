@@ -45,7 +45,6 @@ public class SubwayDataCollector {
     @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
         LocalTime now = LocalTime.now();
-
         // Time range check: from 5 AM to 2 AM
         if (now.isAfter(LocalTime.of(5, 0)) || now.isBefore(LocalTime.of(2, 0))) {
             for (String data : stationList) {
@@ -60,23 +59,19 @@ public class SubwayDataCollector {
         subwayCookie.clear();
     }
 
-    @Scheduled(fixedRate = 30000)
-    public void arrivalSubway() {
-        List<Subway> subways = subwayService.findAll();
+    @Scheduled(fixedRate = 10000)
+    public void processOldSubways() {
+        // 현재 시간에서 5분 전 계산
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(5);
+
+        // 5분 전보다 업데이트된 데이터 조회
+        List<Subway> subways = subwayService.findByUpdatedIsBefore(fiveMinutesAgo);
+
         for (Subway subway : subways) {
-            // 예: 데이터 수집 시간 가져오기 (Subway 엔티티의 필드 예시)
-            LocalDateTime collectedTime = subway.getUpdated();
-
-            // 현재 시간으로부터 5분 전을 계산
-            LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
-
-            // 수집된 데이터가 5분 전인지 확인
-            if (collectedTime.isBefore(fiveMinutesAgo)) {
-                // 5분 이상 지난 데이터에 대해 처리할 작업
-                log.info("Processing old data for subway: {}", subway.getId());
-                subwayService.delete(subway);
-                subwayCookie.add(subway.getBtrainNo());
-            }
+            // 데이터가 5분 이상 된 경우 처리
+            log.info("Processing old data for subway: {}", subway.getId());
+            subwayService.delete(subway);
+            subwayCookie.add(subway.getBtrainNo());
         }
     }
     @Scheduled(cron = "0 0 5 * * *")

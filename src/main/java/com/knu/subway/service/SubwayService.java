@@ -3,9 +3,9 @@ package com.knu.subway.service;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.repository.SubwayRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,6 +71,10 @@ public class SubwayService {
 
     public List<Subway> findByBtrainNoAndSubwayLine(String btrainNo, String subwayLine){
         return subwayRepository.findByBtrainNoAndSubwayLine(btrainNo,subwayLine);
+    }
+
+    public List<Subway> findByUpdatedIsBefore(LocalDateTime time) {
+        return subwayRepository.findByUpdatedIsBefore(time);
     }
 
 
