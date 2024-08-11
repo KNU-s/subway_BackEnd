@@ -1,6 +1,7 @@
 package com.knu.subway.webSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.service.ApiService;
 import com.knu.subway.service.StationInfoService;
@@ -73,6 +74,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             List<Subway> subwayList = subwayService.findBySubwayLine(message);
             if (!subwayList.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
                 String json = objectMapper.writeValueAsString(subwayList);
                 session.sendMessage(new TextMessage(json));
             } else {

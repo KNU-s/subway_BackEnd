@@ -2,6 +2,7 @@ package com.knu.subway.entity;
 
 import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +31,10 @@ public class Subway {
     private String direction;
     private String btrainSttus;
     private boolean lstcarAt;
+    private LocalDateTime updated;
+    private LocalDateTime created;
     @Builder
-    public Subway(String id, String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, TrainStatus arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt) {
+    public Subway(String id, String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, TrainStatus arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt, LocalDateTime updated,LocalDateTime created) {
         this.id = id;
         this.statnNm = statnNm;
         this.statnFNm = statnFNm;
@@ -45,6 +48,8 @@ public class Subway {
         this.direction = direction;
         this.btrainSttus = btrainSttus;
         this.lstcarAt = lstcarAt;
+        this.updated = updated;
+        this.created = created;
     }
 
     public Subway() {

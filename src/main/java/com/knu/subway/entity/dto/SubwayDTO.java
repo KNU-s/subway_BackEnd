@@ -2,6 +2,7 @@ package com.knu.subway.entity.dto;
 
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +22,10 @@ public class SubwayDTO {
     private String direction;
     private String btrainSttus;
     private boolean lstcarAt;
+    private LocalDateTime created;
+    private LocalDateTime updated;
     @Builder(toBuilder = true)
-    public SubwayDTO(String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, String arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt) {
+    public SubwayDTO(String statnNm, String statnFNm, String statnTNm, String bstatnNm, String arvlMsg, String arvlStatus, String updnLine, String subwayLine, String btrainNo, String direction, String btrainSttus, boolean lstcarAt, LocalDateTime updated,LocalDateTime created) {
         this.statnNm = statnNm;
         this.statnFNm = statnFNm;
         this.statnTNm = statnTNm;
@@ -35,6 +38,8 @@ public class SubwayDTO {
         this.direction = direction;
         this.btrainSttus = btrainSttus;
         this.lstcarAt = lstcarAt;
+        this.created = created;
+        this.updated = updated;
     }
 
     @Override
@@ -68,6 +73,7 @@ public class SubwayDTO {
                 .direction(this.direction)
                 .btrainSttus(this.btrainSttus)
                 .lstcarAt(this.lstcarAt)
+                .updated(this.updated)
                 .build();
     }
 
