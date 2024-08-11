@@ -63,8 +63,17 @@ public class SubwayDataCollector {
     @Scheduled(fixedRate = 30000)
     public void arrivalSubway() {
         List<Subway> subways = subwayService.findAll();
-        for(Subway subway : subways ){
-            if(subwayAsyncService.shouldDeleteExistingTrain(subway)){
+        for (Subway subway : subways) {
+            // 예: 데이터 수집 시간 가져오기 (Subway 엔티티의 필드 예시)
+            LocalDateTime collectedTime = subway.getUpdated();
+
+            // 현재 시간으로부터 5분 전을 계산
+            LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+
+            // 수집된 데이터가 5분 전인지 확인
+            if (collectedTime.isBefore(fiveMinutesAgo)) {
+                // 5분 이상 지난 데이터에 대해 처리할 작업
+                log.info("Processing old data for subway: {}", subway.getId());
                 subwayService.delete(subway);
                 subwayCookie.add(subway.getBtrainNo());
             }
