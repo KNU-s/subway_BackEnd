@@ -3,9 +3,11 @@ package com.knu.subway.webSocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.knu.subway.entity.Subway;
+import com.knu.subway.entity.UserVisitLog;
 import com.knu.subway.service.ApiService;
 import com.knu.subway.service.StationInfoService;
 import com.knu.subway.service.SubwayService;
+import com.knu.subway.service.UserVisitService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +31,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ApiService apiService;
     private final StationInfoService stationInfoService;
     private final SubwayService subwayService;
+    private final UserVisitService userVisitService;
     private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
     //메세지를 수신했을 때 실행
     @Override
@@ -45,6 +49,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     //연결 됐을 때 실행
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String ipAddress = (String) session.getAttributes().get("ipAddress");
+        userVisitService.connect(session.getId(), ipAddress);
         sessionMap.put(session.getId(), session);
         session.sendMessage(new TextMessage(session.getId()));
     }
@@ -52,6 +58,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         sessionMap.remove(session.getId());
+        String ipAddress = (String) session.getAttributes().get("ipAddress");
+        userVisitService.closed(session.getId(), ipAddress);
         synchronized (sessionStationMap) {
             sessionStationMap.remove(session);
         }

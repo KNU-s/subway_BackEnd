@@ -15,6 +15,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/socket.subway").setAllowedOrigins("http://43.202.241.160", "http://localhost:3000","http://livesubway.site","https://livesubway.site"); // endpoint 설정과 CORS 설정(*)
+        registry.addHandler(webSocketHandler, "/socket.subway").setAllowedOrigins("http://43.202.241.160", "http://localhost:3000","http://livesubway.site","https://livesubway.site")
+                .addInterceptors(new CustomHandshakeInterceptor()); // endpoint 설정과 CORS 설정(*)
     }
 }
