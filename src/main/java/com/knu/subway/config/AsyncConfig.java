@@ -15,13 +15,13 @@ public class AsyncConfig {
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(8);  // 코어 풀 크기 증가
-        executor.setMaxPoolSize(20);  // 최대 풀 크기 증가
-        executor.setQueueCapacity(100);  // 큐 용량 증가
+        executor.setCorePoolSize(20);  // 코어 풀 크기
+        executor.setMaxPoolSize(30);   // 최대 풀 크기
+        executor.setQueueCapacity(30); // 큐 용량
         executor.setThreadNamePrefix("Async-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 정책 변경
-        executor.setKeepAliveSeconds(10); // 스레드 유지 시간 증가
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setKeepAliveSeconds(5); // 스레드 유지 시간
         executor.initialize();
         return executor;
     }
