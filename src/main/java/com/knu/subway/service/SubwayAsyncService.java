@@ -44,7 +44,8 @@ public class SubwayAsyncService {
                 if (shouldDeleteExistingTrain(existingSubway)) {
                     subwayService.delete(existingSubway);
                     subwayCookie.add(existingSubway.getBtrainNo());
-                } else {
+                } else if(!shouldDeleteExistingTrain(existingSubway) && !subwayEquals(existingSubway, subwayDTO)){
+
                     subwayService.update(existingSubway, subwayDTO);
                 }
             } else if (!subwayCookie.contains(subway.getBtrainNo())) {
@@ -56,5 +57,11 @@ public class SubwayAsyncService {
     public boolean shouldDeleteExistingTrain(Subway subway) {
         return subway.getBstatnNm() != null && subway.getStatnNm() != null && subway.getArvlStatus() != null &&
                 Objects.equals(subway.getBstatnNm(), subway.getStatnNm()) && subway.getArvlStatus().equals("도착");
+    }
+
+    private boolean subwayEquals(Subway subway, SubwayDTO subwayDTO) {
+        return subway.getStatnFNm().equals(subwayDTO.getStatnFNm()) && subway.getStatnNm().equals(subwayDTO.getStatnNm()) &&
+                subway.getStatnTNm().equals(subwayDTO.getStatnTNm()) && subway.getArvlMsg().equals(subwayDTO.getArvlMsg()) &&
+                subway.getBstatnNm().equals(subwayDTO.getBstatnNm());
     }
 }
