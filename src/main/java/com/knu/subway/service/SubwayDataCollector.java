@@ -42,7 +42,7 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "*/3 * * * * *")
     public void collectData() {
         LocalTime now = LocalTime.now();
         // Time range check: from 5 AM to 2 AM
