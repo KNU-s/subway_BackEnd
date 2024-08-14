@@ -53,7 +53,7 @@ public class SubwayDataCollector {
         }
     }
 
-    @Scheduled(fixedRate = 600000)  // 10분마다 쿠키 초기화
+    @Scheduled(fixedRate = 120000)  // 2분마다 쿠키 초기화
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie.clear();
@@ -61,8 +61,8 @@ public class SubwayDataCollector {
 
     @Scheduled(fixedRate = 10000)
     public void processOldSubways() {
-        // 현재 시간에서 5분 전 계산
-        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(5);
+        // 현재 시간에서 1분 전 계산
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(1);
 
         // 5분 전보다 업데이트된 데이터 조회
         List<Subway> subways = subwayService.findByUpdatedIsBefore(fiveMinutesAgo);
