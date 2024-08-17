@@ -53,7 +53,7 @@ public class SubwayDataCollector {
         }
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(cron = "0 0 5 * * *")
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie.clear();
