@@ -61,7 +61,7 @@ public class SubwayDataCollector {
 
     @Scheduled(fixedRate = 10000)
     public void processOldSubways() {
-        // 현재 시간에서 1분 전 계산
+        // 현재 시간에서 5분 전 계산
         LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(5);
 
         // 5분 전보다 업데이트된 데이터 조회

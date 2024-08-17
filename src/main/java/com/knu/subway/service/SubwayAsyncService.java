@@ -41,10 +41,6 @@ public class SubwayAsyncService {
 
             if (!existingSubways.isEmpty()) {
                 Subway existingSubway = existingSubways.get(0);
-//                if (shouldDeleteExistingTrain(existingSubway)) {
-//                    subwayService.delete(existingSubway);
-//                    subwayCookie.add(existingSubway.getBtrainNo());
-//                } else if(!shouldDeleteExistingTrain(existingSubway) && !subwayEquals(existingSubway, subwayDTO)){
                 if(!subwayEquals(existingSubway, subwayDTO)) {
                     subwayService.update(existingSubway, subwayDTO);
                 }
