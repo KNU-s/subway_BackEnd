@@ -50,7 +50,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String ipAddress = (String) session.getAttributes().get("ipAddress");
-        userVisitService.connect(session.getId(), ipAddress);
+        if(ipAddress != null) {
+            userVisitService.connect(session.getId(), ipAddress);
+        }
         sessionMap.put(session.getId(), session);
         session.sendMessage(new TextMessage(session.getId()));
     }
