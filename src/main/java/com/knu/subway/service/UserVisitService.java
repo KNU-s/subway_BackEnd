@@ -25,9 +25,6 @@ public class UserVisitService {
 
     // 기존 방문자 여부 확인 및 로그 업데이트
     public void connect(String sessionId, String ip) {
-        if ("0:0:0:0:0:0:0:1".equals(ip)) {
-            ip = "127.0.0.1";
-        }
         UserVisitLog visitLog = findByIp(ip);
         // IPv6 localhost를 IPv4로 변환
         if (visitLog != null) {
@@ -44,21 +41,16 @@ public class UserVisitService {
                     .count(1)
                     .build();
         }
-
         userVisitLogRepository.save(visitLog);
     }
 
     public void closed(String sessionId, String ip) {
-        if ("0:0:0:0:0:0:0:1".equals(ip)) {
-            ip = "127.0.0.1";
-        }
         UserVisitLog visitLog = findByIp(ip);
         // IPv6 localhost를 IPv4로 변환
         if (visitLog != null) {
             visitLog.updateStatus("Closed"); // 상태 업데이트
             visitLog.setUpdated(LocalDateTime.now().plusHours(9));
         }
-
         userVisitLogRepository.save(visitLog);
     }
 }
