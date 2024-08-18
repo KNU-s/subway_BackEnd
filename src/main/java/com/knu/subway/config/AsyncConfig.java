@@ -15,9 +15,9 @@ public class AsyncConfig {
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);  // 코어 풀 크기
-        executor.setMaxPoolSize(30);   // 최대 풀 크기
-        executor.setQueueCapacity(30); // 큐 용량
+        executor.setCorePoolSize(8);  // 코어 풀 크기
+        executor.setMaxPoolSize(20);   // 최대 풀 크기
+        executor.setQueueCapacity(50); // 큐 용량
         executor.setThreadNamePrefix("Async-");
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());

@@ -42,7 +42,7 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(cron = "*/3 * * * * *")
+    @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
         LocalTime now = LocalTime.now();
         // Time range check: from 5 AM to 2 AM
@@ -61,8 +61,8 @@ public class SubwayDataCollector {
 
     @Scheduled(fixedRate = 10000)
     public void processOldSubways() {
-        // 현재 시간에서 5분 전 계산
-        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(5);
+        // 현재 시간에서 10분 전 계산
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(10);
 
         // 5분 전보다 업데이트된 데이터 조회
         List<Subway> subways = subwayService.findByUpdatedIsBefore(fiveMinutesAgo);
