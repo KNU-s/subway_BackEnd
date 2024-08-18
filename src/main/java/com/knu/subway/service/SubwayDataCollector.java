@@ -44,12 +44,8 @@ public class SubwayDataCollector {
     }
     @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
-        LocalTime now = LocalTime.now();
-        // Time range check: from 5 AM to 2 AM
-        if (now.isAfter(LocalTime.of(5, 0)) || now.isBefore(LocalTime.of(2, 0))) {
-            for (String data : stationList) {
-                subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
-            }
+        for (String data : stationList) {
+            subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
         }
     }
 
