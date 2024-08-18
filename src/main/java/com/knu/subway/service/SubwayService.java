@@ -25,7 +25,9 @@ public class SubwayService {
         subway.setStatnFNm(subwayDto.getStatnFNm());
         subway.setArvlMsg(subwayDto.getArvlMsg());
         subway.setUpdated(subwayDto.getUpdated());
-        subwayRepository.save(subway);
+        subway.setSubwayLine(subway.getSubwayLine());
+        subway.setUpdnLine(subway.getUpdnLine());
+//        subwayRepository.save(subway);
         return subway;
     }
 

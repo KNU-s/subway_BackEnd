@@ -3,9 +3,13 @@ package com.knu.subway.service;
 import com.knu.subway.entity.StationInfo;
 import com.knu.subway.entity.Subway;
 import com.knu.subway.entity.dto.SubwayDTO;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -35,6 +39,7 @@ public class SubwayAsyncService {
     }
 
     private void saveSubwayInfo(List<SubwayDTO> subwayDTOList, List<String> subwayCookie) {
+        List<Subway> save = new ArrayList<>();
         subwayDTOList.forEach(subwayDTO -> {
             Subway subway = subwayDTO.toEntity();
             List<Subway> existingSubways = subwayService.findByBtrainNoAndSubwayLine(subwayDTO.getBtrainNo(), subwayDTO.getSubwayLine());
@@ -42,13 +47,20 @@ public class SubwayAsyncService {
             if (!existingSubways.isEmpty()) {
                 Subway existingSubway = existingSubways.get(0);
                 if(!subwayEquals(existingSubway, subwayDTO)) {
-                    subwayService.update(existingSubway, subwayDTO);
+                    Subway update = subwayService.update(existingSubway, subwayDTO);
+                    save.add(update);
                 }
 
             } else if (!subwayCookie.contains(subway.getBtrainNo())) {
-                subwayService.save(subway);
+//                subwayService.save(subway);
+                save.add(subway);
             }
         });
+        Set<Subway> saveAll = new HashSet<>();
+        for (Subway subway : save) {
+            saveAll.add(subway);
+        }
+        subwayService.saveAll(saveAll.stream().toList());
     }
 
     public boolean shouldDeleteExistingTrain(Subway subway) {

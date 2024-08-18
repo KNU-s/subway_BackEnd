@@ -3,6 +3,7 @@ package com.knu.subway.entity;
 import com.knu.subway.entity.dto.SubwayDTO;
 import com.knu.subway.entity.subwayEnum.TrainStatus;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,5 +75,18 @@ public class Subway {
                 .created(this.created)
                 .build();
         return dto;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subway that = (Subway) o;
+        return Objects.equals(btrainNo, that.btrainNo);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(btrainNo);
     }
 }
