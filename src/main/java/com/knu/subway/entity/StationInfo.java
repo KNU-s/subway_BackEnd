@@ -17,6 +17,7 @@ public class StationInfo {
     private String stationName;
     private String stationLine;
     private Long stationLineId;
+    private int order;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
