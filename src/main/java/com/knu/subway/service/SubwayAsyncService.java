@@ -25,10 +25,16 @@ public class SubwayAsyncService {
 
     private final ApiService apiService;
     private final SubwayService subwayService;
-
+    private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평");
     @Async("taskExecutor")
     public void collectDataByLineAsync(String line, List<StationInfo> stationInfoList, List<String> subwayCookie) {
-        stationInfoList.stream()
+        // Filter out stations from stationInfoList that are in notSupport
+        List<StationInfo> filteredStationInfoList = stationInfoList.stream()
+                .filter(station -> !notSupport.contains(station.getStationName()))
+                .collect(Collectors.toList());
+
+        // Process stations for the given line
+        filteredStationInfoList.stream()
                 .filter(station -> station.getStationLine().equals(line))
                 .forEach(station -> processStation(station, subwayCookie));
     }
