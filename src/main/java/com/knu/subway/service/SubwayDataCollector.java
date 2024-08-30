@@ -42,12 +42,13 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "*/5 18-24 * * *")
     public void collectData() {
         for (String data : stationList) {
             subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
         }
     }
+
 
     @Scheduled(cron = "0 */10 * * * *")
     public void subwayCookie() {
@@ -55,10 +56,10 @@ public class SubwayDataCollector {
         subwayCookie.clear();
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 0/3 * * * ?")
     public void processOldSubways() {
-        // 현재 시간에서 10분 전 계산
-        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(15);
+        // 현재 시간에서 5분 전 계산
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().plusHours(9).minusMinutes(5);
 
         // 5분 전보다 업데이트된 데이터 조회
         List<Subway> subways = subwayService.findByUpdatedIsBefore(fiveMinutesAgo);
