@@ -42,7 +42,7 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(cron = "0 */5 16-17 * * *")
+    @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
         for (String data : stationList) {
             subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
