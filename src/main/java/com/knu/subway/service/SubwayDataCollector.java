@@ -44,13 +44,12 @@ public class SubwayDataCollector {
     }
     @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
-        log.info("Collecting data for stationList size: {}", stationList.size());
         for (String data : stationList) {
             subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
         }
     }
 
-    @Scheduled(cron = "0 0 5 * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     public void subwayCookie() {
         log.info("delete Subway Cookie {} : ",subwayCookie);
         subwayCookie.clear();
