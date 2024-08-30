@@ -65,7 +65,6 @@ public class SubwayDataCollector {
         if(!subways.isEmpty()) {
             for (Subway subway : subways) {
                 // 데이터가 5분 이상 된 경우 처리
-                log.info("Processing old data for subway: {}", subway.getId());
                 subwayService.delete(subway);
                 subwayCookie.add(subway.getBtrainNo());
             }
