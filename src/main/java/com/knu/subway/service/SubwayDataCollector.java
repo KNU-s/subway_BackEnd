@@ -5,6 +5,7 @@ import com.knu.subway.entity.Subway;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,10 +45,19 @@ public class SubwayDataCollector {
     }
     @Scheduled(cron = "*/5 * * * * *")
     public void collectData() {
+        // 현재 시간을 가져옵니다.
+        LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
+
+        // 오전 2시부터 오전 5시 사이인 경우 작업을 실행하지 않습니다.
+        if (currentTime.isAfter(LocalTime.of(18,00 )) && currentTime.isBefore(LocalTime.of(18, 10))) {
+            return;
+        }
+
         for (String data : stationList) {
             subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
         }
     }
+
 
 
 
