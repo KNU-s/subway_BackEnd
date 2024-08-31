@@ -49,7 +49,7 @@ public class SubwayDataCollector {
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
 
         // 오전 2시부터 오전 5시 사이인 경우 작업을 실행하지 않습니다.
-        if (currentTime.isAfter(LocalTime.of(18,00 )) && currentTime.isBefore(LocalTime.of(18, 10))) {
+        if (currentTime.isAfter(LocalTime.of(20,00 )) && currentTime.isBefore(LocalTime.of(20, 05))) {
             return;
         }
 
