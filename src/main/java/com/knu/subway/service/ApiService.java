@@ -111,7 +111,7 @@ public class ApiService {
                 .statnNm(cleanStationName((String) tempEle.get("arvlMsg3")))
                 .statnFNm(getStationName((String) tempEle.get("statnFid")))
                 .statnTNm(getStationName((String) tempEle.get("statnTid")))
-                .bstatnNm(getFirstWord((String) tempEle.get("bstatnNm")))
+                .bstatnNm((String) tempEle.get("bstatnNm"))
                 .arvlMsg((String) tempEle.get("arvlMsg2"))
                 .arvlStatus((String) tempEle.get("arvlCd"))
                 .updnLine((String) tempEle.get("updnLine"))
