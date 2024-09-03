@@ -28,22 +28,12 @@ public class SubwayAsyncService {
     private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평");
     @Async("taskExecutor")
     public void collectDataByLineAsync(String line, List<StationInfo> stationInfoList, List<String> subwayCookie) {
-        long startTime = System.currentTimeMillis();  // 작업 시작 시간
-        log.info("Thread {} started processing line {}", Thread.currentThread().getName(), line);
-
-        // Filter out stations from stationInfoList that are in notSupport
         List<StationInfo> filteredStationInfoList = stationInfoList.stream()
                 .filter(station -> !notSupport.contains(station.getStationName()))
                 .collect(Collectors.toList());
-
-        // Process stations for the given line
         filteredStationInfoList.stream()
                 .filter(station -> station.getStationLine().equals(line))
                 .forEach(station -> processStation(station, subwayCookie));
-
-        long endTime = System.currentTimeMillis();  // 작업 종료 시간
-        log.info("Thread {} finished processing line {}. Time taken: {} ms",
-                Thread.currentThread().getName(), line, (endTime - startTime));
     }
 
     private void processStation(StationInfo station, List<String> subwayCookie) {
