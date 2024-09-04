@@ -33,6 +33,10 @@ public class SubwayDataCollector {
     private Set<String> stationList;
     private final SubwayAsyncService subwayAsyncService;
     private List<String> subwayCookie = new ArrayList<>();
+    private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평");
+
+    // 패턴 교체를 위한 상태 변수
+    private boolean processFirstPattern = true;
 
     @PostConstruct
     private void init() {
@@ -43,23 +47,33 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    @Scheduled(cron = "0 * * * * *")
+
+    @Scheduled(cron = "*/10 * * * * *")
     public void collectData() {
         // 현재 시간을 가져옵니다.
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
 
         // 오전 2시부터 오전 5시 사이인 경우 작업을 실행하지 않습니다.
-        if (currentTime.isAfter(LocalTime.of(01,59 )) && currentTime.isBefore(LocalTime.of(05, 00))) {
+        if (currentTime.isAfter(LocalTime.of(1, 59)) && currentTime.isBefore(LocalTime.of(5, 0))) {
             return;
         }
 
+        // 번갈아 가며 첫 번째 패턴과 두 번째 패턴을 처리합니다.
         for (String data : stationList) {
-            subwayAsyncService.collectDataByLineAsync(data, stationInfoList, subwayCookie);
+            subwayAsyncService.collectDataByLineAsync(data, filterStationsByPattern(stationInfoList, processFirstPattern), subwayCookie);
         }
+
+        // 패턴을 교체합니다.
+        processFirstPattern = !processFirstPattern;
     }
 
-
-
+    // 특정 패턴(3의 배수 간격)을 기준으로 역 정보를 필터링하는 메서드
+    private List<StationInfo> filterStationsByPattern(List<StationInfo> stationInfoList, boolean isFirstPattern) {
+        return stationInfoList.stream()
+                .filter(station -> (station.getOrder() - 1) % 3 == (isFirstPattern ? 0 : 1))
+                .filter(station -> !notSupport.contains(station.getStationName()))
+                .collect(Collectors.toList());
+    }
 
     @Scheduled(cron = "0 */10 * * * *")
     public void subwayCookie() {
@@ -82,6 +96,7 @@ public class SubwayDataCollector {
             }
         }
     }
+
     @Scheduled(cron = "0 0 5 * * *")
     public void resetSubway(){
         subwayService.deleteAll();

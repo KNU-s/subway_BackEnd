@@ -25,13 +25,10 @@ public class SubwayAsyncService {
 
     private final ApiService apiService;
     private final SubwayService subwayService;
-    private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평");
+
     @Async("taskExecutor")
     public void collectDataByLineAsync(String line, List<StationInfo> stationInfoList, List<String> subwayCookie) {
-        List<StationInfo> filteredStationInfoList = stationInfoList.stream()
-                .filter(station -> !notSupport.contains(station.getStationName()))
-                .collect(Collectors.toList());
-        filteredStationInfoList.stream()
+        stationInfoList.stream()
                 .filter(station -> station.getStationLine().equals(line))
                 .forEach(station -> processStation(station, subwayCookie));
     }
@@ -55,15 +52,11 @@ public class SubwayAsyncService {
                 }
 
             } else if (!subwayCookie.contains(subway.getBtrainNo())) {
-//                subwayService.save(subway);
                 save.add(subway);
             }
         });
-        Set<Subway> saveAll = new HashSet<>();
-        for (Subway subway : save) {
-            saveAll.add(subway);
-        }
-        subwayService.saveAll(saveAll.stream().toList());
+        Set<Subway> saveAll = new HashSet<>(save);
+        subwayService.saveAll(new ArrayList<>(saveAll));
     }
 
     public boolean shouldDeleteExistingTrain(Subway subway) {

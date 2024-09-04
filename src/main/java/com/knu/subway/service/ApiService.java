@@ -5,16 +5,17 @@ import com.knu.subway.entity.dto.SubwayDTO;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
-
 @RequiredArgsConstructor
 @Service
 public class ApiService {
@@ -30,6 +31,12 @@ public class ApiService {
     @Value("${subway.api.url}")
     private String baseUrl;
 
+    private static long count = 0;
+
+    @Scheduled(cron = "0 */10 * * * *")
+    private void check(){
+        System.out.println("호출 횟수 = "+ count);
+    }
     @PostConstruct
     private void init() {
         String fullUrl = baseUrl + apiKey + "/json/realtimeStationArrival/0/10";
@@ -49,6 +56,7 @@ public class ApiService {
     }
 
     public List<SubwayDTO> getSubwayArrivals(String stationName) {
+        count++;
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
