@@ -33,7 +33,7 @@ public class SubwayDataCollector {
     private Set<String> stationList;
     private final SubwayAsyncService subwayAsyncService;
     private List<String> subwayCookie = new ArrayList<>();
-    private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평");
+    private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평","임진강");
 
     // 패턴 교체를 위한 상태 변수
     private boolean processFirstPattern = true;
