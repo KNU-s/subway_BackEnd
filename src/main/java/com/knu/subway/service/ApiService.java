@@ -33,7 +33,7 @@ public class ApiService {
 
     private static long count = 0;
 
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     private void check(){
         System.out.println("호출 횟수 = "+ count);
     }
