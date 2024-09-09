@@ -85,20 +85,15 @@ public class SubwayDataCollector {
     private List<StationInfo> filterStationsByPattern(List<StationInfo> stationInfoList, boolean isFirstPattern, int numPattern) {
         // 기본 필터링: 패턴에 맞는 역만 포함
         List<StationInfo> filteredStations = stationInfoList.stream()
-                .filter(station -> (station.getOrder() - 1) % numPattern == 0)
+                .filter(station -> (station.getOrder()) % numPattern == 0)
                 .filter(station -> !notSupport.contains(station.getStationName()))
                 .collect(Collectors.toList());
 
-        // 첫 번째 역과 마지막 역을 포함시키기 위해 필터링된 리스트에 추가
+        // 마지막 역을 포함시키기 위해 필터링된 리스트에 추가
         if (!stationInfoList.isEmpty()) {
-            StationInfo firstStation = stationInfoList.get(0);
             StationInfo lastStation = stationInfoList.get(stationInfoList.size() - 1);
 
-            // 첫 번째 역과 마지막 역이 필터링된 리스트에 없으면 추가
-            if (!filteredStations.contains(firstStation)) {
-                filteredStations.add(0, firstStation);
-            }
-            if (!filteredStations.contains(lastStation)) {
+            if (!filteredStations.contains(lastStation) && !notSupport.contains(lastStation.getStationName())) {
                 filteredStations.add(lastStation);
             }
         }
