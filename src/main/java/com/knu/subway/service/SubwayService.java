@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -59,7 +61,7 @@ public class SubwayService {
         return subwayRepository.findBySubwayLine(subwayLine);
     }
 
-    public void saveAll(List<Subway> subways){
+    public void saveAll(Set<Subway> subways){
         subwayRepository.saveAll(subways);
     }
 

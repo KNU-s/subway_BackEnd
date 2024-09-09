@@ -56,7 +56,7 @@ public class SubwayAsyncService {
             }
         });
         Set<Subway> saveAll = new HashSet<>(save);
-        subwayService.saveAll(new ArrayList<>(saveAll));
+        subwayService.saveAll(saveAll);
     }
 
     public boolean shouldDeleteExistingTrain(Subway subway) {
