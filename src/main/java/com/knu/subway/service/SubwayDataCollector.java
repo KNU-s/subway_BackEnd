@@ -49,7 +49,7 @@ public class SubwayDataCollector {
     }
     // 7:30~9:30, 17:30~19:30 -> 6초마다 호출
     @Scheduled(cron = "*/6 30-59 7-9 * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "*/6 30-59 15-19 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/6 30-59 17-19 * * *", zone = "Asia/Seoul")
     public void collectDataDuringRushHour() {
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
         log.info("지금은 출퇴근 시간입니다 {}",currentTime);
