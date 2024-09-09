@@ -7,19 +7,17 @@ import com.knu.subway.service.ApiService;
 import com.knu.subway.service.StationInfoService;
 import com.knu.subway.service.SubwayService;
 import com.knu.subway.service.UserVisitService;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Getter
@@ -36,11 +34,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메시지를 수신했을 때 실행
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
-        String receivedMessage = message.getPayload();
-        synchronized (sessionStationMap) {
-            sessionStationMap.put(session, receivedMessage);
+        String stationName = message.getPayload();  // 프론트에서 보낸 역 이름을 수신
+        //노선 요청은 노선_노선명 이런 형태로 넘어온다.
+        if(stationName != null && stationName.contains("_") && stationName.split("_")[0].equals("노선")) {
+            sendData(session, stationName.split("_")[1]);  // 해당 역의 지하철 데이터를 전송
         }
-        sendSubwayData();
     }
 
     // 연결됐을 때 실행
@@ -66,23 +64,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         log.info("WebSocket connection closed: Session ID = {}", session.getId());
     }
 
-    // 5초마다 지하철 데이터를 전송
-    @Scheduled(fixedRate = 5000)
-    public void sendSubwayData() {
-        synchronized (sessionMap) {
-            sessionMap.values().removeIf(session -> !session.isOpen());  // 닫힌 세션 제거
-            sessionMap.values().forEach(session -> {
-                String message = sessionStationMap.get(session);
-                if (message != null && !message.isEmpty()) {
-                    sendData(session, message);
-                }
-            });
-        }
-    }
-
-    public void sendData(WebSocketSession session, String message) {
+    // 특정 역의 지하철 데이터를 전송
+    public void sendData(WebSocketSession session, String stationName) {
         try {
-            List<Subway> subwayList = subwayService.findBySubwayLine(message);
+            List<Subway> subwayList = subwayService.findBySubwayLine(stationName);
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
             String json = objectMapper.writeValueAsString(subwayList);
