@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ApiService {
@@ -33,9 +34,9 @@ public class ApiService {
 
     private static long count = 0;
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     private void check(){
-        System.out.println("호출 횟수 = "+ count);
+        log.info("호출 횟수 {}", count);
     }
     @PostConstruct
     private void init() {
