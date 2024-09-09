@@ -48,12 +48,15 @@ public class SubwayDataCollector {
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
     // 7:30~9:30, 17:30~19:30 -> 6초마다 호출
-    @Scheduled(cron = "*/6 * 7-9 * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "*/6 * 17-19 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/6 30-59 7-9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/6 30-59 15-19 * * *", zone = "Asia/Seoul")
     public void collectDataDuringRushHour() {
+        LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
+        log.info("지금은 출퇴근 시간입니다 {}",currentTime);
         collectData(2);
     }
-    @Scheduled(cron = "*/10 * * * * *")
+
+    @Scheduled(cron = "*/12 * * * * *")
     public void collectDataOutsideRushHour() {
         // 현재 시간을 가져옵니다.
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
@@ -69,7 +72,7 @@ public class SubwayDataCollector {
             return;
         }
 
-        collectData(4);
+        collectData(3);
     }
 
     private void collectData(int numPattern) {
@@ -85,7 +88,7 @@ public class SubwayDataCollector {
     private List<StationInfo> filterStationsByPattern(List<StationInfo> stationInfoList, boolean isFirstPattern, int numPattern) {
         // 기본 필터링: 패턴에 맞는 역만 포함
         List<StationInfo> filteredStations = stationInfoList.stream()
-                .filter(station -> (station.getOrder()) % numPattern == 0)
+                .filter(station -> (station.getOrder()) % numPattern == (isFirstPattern ? 0 : 1))
                 .filter(station -> !notSupport.contains(station.getStationName()))
                 .collect(Collectors.toList());
 
