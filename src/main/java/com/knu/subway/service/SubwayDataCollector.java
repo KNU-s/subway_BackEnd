@@ -47,32 +47,63 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-
+    // 7:30~9:30, 17:30~19:30 -> 6초마다 호출
+    @Scheduled(cron = "*/6 * 7-9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "*/6 * 17-19 * * *", zone = "Asia/Seoul")
+    public void collectDataDuringRushHour() {
+        collectData(2);
+    }
     @Scheduled(cron = "*/10 * * * * *")
-    public void collectData() {
+    public void collectDataOutsideRushHour() {
         // 현재 시간을 가져옵니다.
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
 
         // 오전 2시부터 오전 5시 사이인 경우 작업을 실행하지 않습니다.
-        if (currentTime.isAfter(LocalTime.of(1, 59)) && currentTime.isBefore(LocalTime.of(5, 0))) {
+        if (currentTime.isAfter(LocalTime.of(0, 40)) && currentTime.isBefore(LocalTime.of(5, 30))) {
             return;
         }
 
+        // 7:30~9:30, 17:30~19:30 시간대에는 작업을 실행하지 않습니다.
+        if ((currentTime.isAfter(LocalTime.of(7, 30)) && currentTime.isBefore(LocalTime.of(9, 30))) ||
+                (currentTime.isAfter(LocalTime.of(17, 30)) && currentTime.isBefore(LocalTime.of(19, 30)))) {
+            return;
+        }
+
+        collectData(4);
+    }
+
+    private void collectData(int numPattern) {
         // 번갈아 가며 첫 번째 패턴과 두 번째 패턴을 처리합니다.
         for (String data : stationList) {
-            subwayAsyncService.collectDataByLineAsync(data, filterStationsByPattern(stationInfoList, processFirstPattern), subwayCookie);
+            subwayAsyncService.collectDataByLineAsync(data, filterStationsByPattern(stationInfoList, processFirstPattern, numPattern), subwayCookie);
         }
 
         // 패턴을 교체합니다.
         processFirstPattern = !processFirstPattern;
     }
-
     // 특정 패턴(3의 배수 간격)을 기준으로 역 정보를 필터링하는 메서드
-    private List<StationInfo> filterStationsByPattern(List<StationInfo> stationInfoList, boolean isFirstPattern) {
-        return stationInfoList.stream()
-                .filter(station -> (station.getOrder() - 1) % 3 == (isFirstPattern ? 0 : 1))
+    private List<StationInfo> filterStationsByPattern(List<StationInfo> stationInfoList, boolean isFirstPattern, int numPattern) {
+        // 기본 필터링: 패턴에 맞는 역만 포함
+        List<StationInfo> filteredStations = stationInfoList.stream()
+                .filter(station -> (station.getOrder() - 1) % numPattern == 0)
                 .filter(station -> !notSupport.contains(station.getStationName()))
                 .collect(Collectors.toList());
+
+        // 첫 번째 역과 마지막 역을 포함시키기 위해 필터링된 리스트에 추가
+        if (!stationInfoList.isEmpty()) {
+            StationInfo firstStation = stationInfoList.get(0);
+            StationInfo lastStation = stationInfoList.get(stationInfoList.size() - 1);
+
+            // 첫 번째 역과 마지막 역이 필터링된 리스트에 없으면 추가
+            if (!filteredStations.contains(firstStation)) {
+                filteredStations.add(0, firstStation);
+            }
+            if (!filteredStations.contains(lastStation)) {
+                filteredStations.add(lastStation);
+            }
+        }
+
+        return filteredStations;
     }
 
     @Scheduled(cron = "0 */10 * * * *")
