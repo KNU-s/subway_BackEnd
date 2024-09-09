@@ -34,6 +34,7 @@ public class SubwayDataCollector {
     private final SubwayAsyncService subwayAsyncService;
     private List<String> subwayCookie = new ArrayList<>();
     private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평","임진강");
+    private final List<String> confusionStation = List.of("1호선-(인천)","2호선-(천안-신창)","2호선-(내선순환)","3호선","4호선","6호선","9호선","신분당선","7호선");
 
     // 패턴 교체를 위한 상태 변수
     private boolean processFirstPattern = true;
@@ -72,8 +73,17 @@ public class SubwayDataCollector {
             return;
         }
 
-        collectData(3);
+        // confusionStation에 포함된 역이 있는지 확인
+        boolean hasConfusionStation = stationInfoList.stream()
+                .anyMatch(station -> confusionStation.contains(station.getStationLine()));
+
+        if (hasConfusionStation) {
+            collectData(4);
+        } else {
+            collectData(3);
+        }
     }
+
 
     private void collectData(int numPattern) {
         // 번갈아 가며 첫 번째 패턴과 두 번째 패턴을 처리합니다.
