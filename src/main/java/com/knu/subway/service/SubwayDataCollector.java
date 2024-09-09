@@ -48,14 +48,21 @@ public class SubwayDataCollector {
         subwayService.deleteAll();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
-    // 7:30~9:30, 17:30~19:30 -> 6초마다 호출
-    @Scheduled(cron = "*/6 30-59 7-9 * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "*/6 30-59 17-19 * * *", zone = "Asia/Seoul")
+
+   // 6초마다 호출되지만, 출퇴근 시간대에만 실행되도록 설정
+    @Scheduled(cron = "*/6 * * * * *", zone = "Asia/Seoul")
     public void collectDataDuringRushHour() {
         LocalTime currentTime = LocalTime.now(ZoneId.of("Asia/Seoul"));
-        log.info("지금은 출퇴근 시간입니다 {}",currentTime);
-        collectData(2);
+
+        // 오전 7시 30분 ~ 오전 9시 30분, 오후 5시 30분 ~ 오후 7시 30분에만 실행
+        if ((currentTime.isAfter(LocalTime.of(7, 30)) && currentTime.isBefore(LocalTime.of(9, 30))) ||
+                (currentTime.isAfter(LocalTime.of(17, 30)) && currentTime.isBefore(LocalTime.of(19, 30)))) {
+            log.info("출퇴근 시간입니다. 현재 시간: {}", currentTime);
+            collectData(2); // 데이터 수집 호출
+        } else {
+        }
     }
+
 
     @Scheduled(cron = "*/12 * * * * *")
     public void collectDataOutsideRushHour() {
