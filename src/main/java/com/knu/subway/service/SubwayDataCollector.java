@@ -46,6 +46,7 @@ public class SubwayDataCollector {
                 .map(StationInfo::getStationLine)
                 .collect(Collectors.toSet());
         subwayService.deleteAll();
+        subwayCookie.clear();
         System.out.println("Initialized stationList: " + stationList); // stationList가 예상대로 초기화되었는지 확인
     }
 

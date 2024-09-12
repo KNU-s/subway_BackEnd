@@ -62,6 +62,7 @@ public class ApiService {
                 .uri(uriBuilder -> uriBuilder.path("/{stationName}").build(stationName))
                 .retrieve()
                 .bodyToMono(String.class)
+                .retry(2)
                 .onErrorResume(throwable -> {
                     throw new RuntimeException("Error occurred while fetching subway arrivals: " + throwable.getMessage());
                 })
