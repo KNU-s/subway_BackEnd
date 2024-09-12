@@ -34,7 +34,7 @@ public class SubwayDataCollector {
     private final SubwayAsyncService subwayAsyncService;
     private List<String> subwayCookie = new ArrayList<>();
     private final List<String> notSupport = List.of("진접","오남","별내별가람","운천","용문","지평","임진강");
-    private final List<String> confusionStation = List.of("1호선-(인천)","2호선-(천안-신창)","2호선-(내선순환)","3호선","4호선","6호선","9호선","신분당선","7호선");
+    private final List<String> confusionStation = List.of("1호선-(인천)","1호선-(천안-신창)","2호선-(내선순환)","3호선","4호선","6호선","9호선","신분당선","7호선");
 
     // 패턴 교체를 위한 상태 변수
     private boolean processFirstPattern = true;
@@ -57,9 +57,7 @@ public class SubwayDataCollector {
         // 오전 7시 30분 ~ 오전 9시 30분, 오후 5시 30분 ~ 오후 7시 30분에만 실행
         if ((currentTime.isAfter(LocalTime.of(7, 30)) && currentTime.isBefore(LocalTime.of(9, 30))) ||
                 (currentTime.isAfter(LocalTime.of(17, 30)) && currentTime.isBefore(LocalTime.of(19, 30)))) {
-            log.info("출퇴근 시간입니다. 현재 시간: {}", currentTime);
             collectData(2); // 데이터 수집 호출
-        } else {
         }
     }
 
