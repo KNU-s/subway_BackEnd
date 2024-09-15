@@ -58,11 +58,9 @@ public class SubwayDataCollector {
         // 오전 7시 30분 ~ 오전 9시 30분, 오후 5시 30분 ~ 오후 7시 30분에만 실행
         if ((currentTime.isAfter(LocalTime.of(7, 30)) && currentTime.isBefore(LocalTime.of(9, 30))) ||
                 (currentTime.isAfter(LocalTime.of(17, 30)) && currentTime.isBefore(LocalTime.of(19, 30)))) {
-            collectData(2); // 데이터 수집 호출
+            collectData(2); // 2의 배수인 역 호출
         }
     }
-
-
     @Scheduled(cron = "*/12 * * * * *")
     public void collectDataOutsideRushHour() {
         // 현재 시간을 가져옵니다.
@@ -72,21 +70,19 @@ public class SubwayDataCollector {
         if (currentTime.isAfter(LocalTime.of(0, 40)) && currentTime.isBefore(LocalTime.of(5, 30))) {
             return;
         }
-
         // 7:30~9:30, 17:30~19:30 시간대에는 작업을 실행하지 않습니다.
         if ((currentTime.isAfter(LocalTime.of(7, 30)) && currentTime.isBefore(LocalTime.of(9, 30))) ||
                 (currentTime.isAfter(LocalTime.of(17, 30)) && currentTime.isBefore(LocalTime.of(19, 30)))) {
             return;
         }
-
         // confusionStation에 포함된 역이 있는지 확인
         boolean hasConfusionStation = stationInfoList.stream()
                 .anyMatch(station -> confusionStation.contains(station.getStationLine()));
-
+        // 혼잡한 노선은 3의 배수를 호출하고 혼잡하지 않는 노선은 4의 배수를 호출
         if (hasConfusionStation) {
-            collectData(4);
+            collectData(3); // 3의 배수인 역 호출
         } else {
-            collectData(3);
+            collectData(4); // 4의 배수인 역 호출
         }
     }
 
